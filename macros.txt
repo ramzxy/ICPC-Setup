@@ -1,0 +1,16 @@
+# ====== ICPC Starter Bashrc ======
+
+# Fast compile with safety + sanitizers
+alias c='g++ -Wall -Wconversion -Wfatal-errors -g -std=c++17 -fsanitize=undefined,address'
+
+# Run program quickly with sample input
+alias r='./a.out < in.txt > out.txt'
+
+# Diff output with expected (requires ans.txt file)
+alias chk='diff -w -B out.txt ans.txt'
+
+# Turn Caps Lock into < > for faster typing
+xmodmap -e "clear lock" -e "keycode 66=less greater"
+
+# Nice prompt for clarity
+PS1="[\u@\h \W]$ "
