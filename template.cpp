@@ -22,13 +22,19 @@ const ll LINF = 1e18;
 const int MOD = 1e9+7; // or 998244353 for NTT problems
 
 // ================== Main ==================
+void solve(){
+
+}
+
+
+
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     cin.exceptions(cin.failbit);
 
-    int n;
-    cin >> n;
-
-    cout << n << endl;
+    int ts;
+    cin >> ts;
+    while(--ts) solve();
 }
