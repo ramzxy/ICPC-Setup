@@ -1,0 +1,141 @@
+% BAPC 2026 team reference document. Build with ./build.sh, test the code with tests/run.sh.
+% TRD rules: max 25 single-sided A4 pages, university name top left, page number top right,
+% readable from half a metre. Handwritten notes are allowed on the front of the pages.
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper, landscape, left=7mm, right=7mm, top=14mm, bottom=7mm,
+            headsep=3mm, headheight=12pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scaled=0.92]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[varqu, varl]{inconsolata}
+\usepackage{amsmath, amssymb}
+\usepackage{xcolor, listings, multicol, fancyhdr, enumitem, booktabs, tabularx, array}
+\usepackage[explicit]{titlesec}
+\usepackage{titletoc}
+\usepackage[most]{tcolorbox}
+\usepackage{needspace}
+\usepackage{microtype}
+% in \texttt, << and >> would otherwise print as French quotes
+\DisableLigatures[<,>]{encoding = T1, family = tt*}
+
+% ---- Fill these in before printing ----
+\newcommand{\university}{University of Twente}
+\newcommand{\teamname}{Nth time's the charm}
+
+% ---- Page header: university left, section in the middle, page number right ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{\university}\enspace|\enspace\teamname}
+% the chapters on this page, e.g. "5 Dynamic programming -- 6 Graphs"
+\makeatletter
+\newcommand{\pagesections}{%
+  \edef\nb@top{\expandafter\@leftmark\topmark\@empty\@empty}%
+  \edef\nb@last{\leftmark}%
+  \ifx\nb@top\@empty \nb@last
+  \else\ifx\nb@top\nb@last \nb@last
+  \else \nb@top\ \textendash\ \nb@last \fi\fi}
+\makeatother
+\fancyhead[C]{\ifnum\value{page}=1 Contents\else\pagesections\fi}
+\fancyhead[R]{\textbf{\large\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{notes}{\fancyhf{}%
+  \fancyhead[L]{\textbf{\university}\enspace|\enspace\teamname}%
+  \fancyhead[C]{Notes}\fancyhead[R]{\textbf{\large\thepage}}}
+
+\setlength{\columnsep}{4mm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlist{nosep, leftmargin=1em, label=\textbullet}
+
+% ---- Headings ----
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0pt}{\thesection\quad #1}[{\titlerule[1pt]}]
+\titleformat{name=\section, numberless}{\normalfont\Large\bfseries}{}{0pt}{#1}[{\titlerule[1pt]}]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titleformat{\subsection}{\normalfont\bfseries}{}{0pt}%
+  {\colorbox{black!15}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut\thesubsection\quad #1}}}
+\titlespacing*{\subsection}{0pt}{5pt}{2pt}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection\enspace #1}{}}
+
+% ---- Table of contents ----
+\titlecontents{section}[0pt]{\addvspace{3pt}\bfseries}{\thecontentslabel\enspace}{}{\hfill\contentspage}
+\newcommand{\tocend}{\par}  % \par is not allowed directly in the argument
+\titlecontents*{subsection}[0pt]{\small\raggedright}{}{}{~\thecontentspage}[\enspace\textbullet\enspace][\tocend]
+
+% ---- Code ----
+\lstdefinestyle{cpp}{
+  language=C++, morekeywords={ll, vi, pii, rep, all, auto},
+  basicstyle=\ttfamily\fontsize{7.4}{8.3}\selectfont,
+  keywordstyle=\bfseries,
+  commentstyle=\color{black!60},
+  stringstyle=\color{black!80},
+  columns=fullflexible, keepspaces=true,
+  breaklines=true, postbreak=\mbox{$\hookrightarrow$\space},
+  tabsize=4, showstringspaces=false, upquote=true,
+  frame=leftline, framerule=1pt, rulecolor=\color{black!40}, framesep=3pt, xleftmargin=4pt,
+  aboveskip=2pt, belowskip=3pt,
+}
+% \code{name} prints code/cpp/name.cpp (keep its lines at most 68 characters)
+% every snippet is one unbreakable block (the longest, 55 lines, fits a column)
+\newcommand{\keep}[1]{\par\noindent\begin{minipage}{\linewidth}#1\end{minipage}\par}
+\newcommand{\code}[1]{\keep{\lstinputlisting[style=cpp]{code/cpp/#1.cpp}}}
+% \pycode{name} and \shcode{name}: code/py/name.py and code/sh/name.sh
+\newcommand{\pycode}[1]{\keep{\lstinputlisting[style=cpp, language=Python]{code/py/#1.py}}}
+\newcommand{\shcode}[1]{\keep{\lstinputlisting[style=cpp, language=bash]{code/sh/#1.sh}}}
+% a shell command, e.g. how to compile
+\newcommand{\shell}[1]{\par{\raggedright\small\ttfamily #1\par}}
+
+% ---- "Which technique?" lines: clue, what to try, page ----
+\newcommand{\techrow}[3]{\par\noindent
+  \parbox[t]{0.50\linewidth}{\raggedright #1}\hfill
+  \parbox[t]{0.40\linewidth}{\raggedright #2}\hfill
+  \makebox[1.4em][r]{#3}\par\vspace{0.6pt}}
+\newcommand{\techhead}{\techrow{\textbf{the statement says}}{\textbf{try}}{\textbf{p.}}%
+  \vspace{-1pt}\noindent\rule{\linewidth}{0.4pt}\par}
+\newcommand{\tech}[3]{\techrow{#1}{#2}{\pageref{t:#3}}}
+
+% ---- Topics ----
+% \topic{Dijkstra}{$O(m \log n)$}: a heading with its running time on the right
+\newcommand{\topic}[2]{\subsection[#1]{#1\hfill #2}}
+% \use{...}: one line saying when to use it, in a grey box
+\newtcolorbox{tip}{enhanced, colback=black!5, colframe=black!5, boxrule=0pt, sharp corners,
+  left=3pt, right=3pt, top=1pt, bottom=1pt, before skip=1pt, after skip=1pt,
+  before upper=\raggedright, after={\par\nobreak},
+  borderline west={1.5pt}{0pt}{black!60}}
+\newcommand{\use}[1]{\begin{tip}#1\end{tip}}
+
+\begin{document}
+\begin{multicols*}{3}
+\raggedcolumns
+\raggedright   % narrow columns: no stretched spaces
+\ifdefined\onlysection
+  \input{sections/\onlysection}   % ./preview.sh name: one section only
+\else
+  \tableofcontents
+  \input{sections/contest}
+  \input{sections/cpp}
+  \input{sections/adhoc}
+  \input{sections/greedy}
+  \input{sections/searching}
+  \input{sections/dp}
+  \input{sections/graphs}
+  \input{sections/trees}
+  \input{sections/math}
+  \input{sections/probability}
+  \input{sections/games}
+  \input{sections/geometry}
+  \input{sections/strings}
+  \input{sections/testing}
+\fi
+\end{multicols*}
+\ifdefined\onlysection\else
+  % a ruled page for handwritten additions (allowed by the TRD rules)
+  \clearpage
+  \thispagestyle{notes}
+  \section*{Notes}
+  \addcontentsline{toc}{section}{Notes}
+  {\color{black!25}\newcount\noteline
+   \loop\ifnum\noteline<30 \vspace{5.4mm}\hrule\advance\noteline by 1 \repeat}
+\fi
+\end{document}

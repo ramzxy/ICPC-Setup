@@ -1,0 +1,4 @@
+# The snippets in code/cpp are pieces of a full program, so clangd cannot check
+# them on their own. tests/run.sh compiles them for real.
+Diagnostics:
+  Suppress: '*'

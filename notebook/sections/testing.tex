@@ -1,0 +1,30 @@
+\section{Brute force and testing}
+
+\topic{All subsets}{$O(2^n \cdot n)$}\label{t:subsets}
+\use{$n \le 20$, choose some of the items. A few special things with 2 options each: try all
+$2^k$.}
+\code{bf_subsets}
+
+\topic{All orders}{$O(n! \cdot n)$}\label{t:perms}
+\use{$n \le 10$ and the answer is an order (route, schedule, assignment).}
+\code{bf_perms}
+
+\topic{Backtracking with pruning}{}
+\use{Too many ways, but bad partial answers can be stopped early. Hardest items first; skip
+options equal to one already tried.}
+\code{bf_backtrack}
+
+\topic{Stress test}{}
+\use{WA and no idea why: \texttt{brute.cpp} (slow, surely right), \texttt{gen.cpp} (small
+random tests), \texttt{sol.cpp}; run until the outputs differ. Crash or hang: the test is in
+\texttt{in.txt}. Too slow? \texttt{time ./sol < big.txt} with a worst-case input.}
+\code{bf_gen}
+\shcode{stress}
+
+\topic{Interactive problems}{}\label{t:interactive}
+\use{Flush after every question. Test by typing the answers yourself, or with the testing
+tool next to the samples.}
+\code{bf_interactive}
+
+\topic{Debugging}{}
+\use{\texttt{dbg(x)} is in the template and only prints when compiled with \texttt{-DLOCAL} (the \texttt{c} command). \texttt{assert(cond)} stops on the line. \texttt{-D\_GLIBCXX\_DEBUG} checks every \texttt{v[i]}.}

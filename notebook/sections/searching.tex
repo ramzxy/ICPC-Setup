@@ -1,0 +1,51 @@
+\section{Searching and arrays}
+
+\topic{Binary search on the answer}{$O(\log(\mathit{hi} - \mathit{lo}))$ checks}\label{t:binsearch}
+\use{``Smallest $t$ such that \dots'' and checking one $t$ is easy: works for $t$ $\Rightarrow$
+works for $t + 1$. Write \texttt{ok(t)}.}
+\code{binary_search}
+
+\topic{Binary search on real numbers}{100 steps}
+\use{The answer is a real number and \texttt{ok} is monotone.}
+\code{binary_search_real}
+
+\topic{Finding a peak}{$O(\log n)$}\label{t:peak}
+\use{Goes up then down (or down then up), find the top. Often interactive. Integers: binary
+search on ``is the next value lower?''; reals: ternary search.}
+\code{peak_int}
+\code{ternary}
+
+\subsection{Searching in sorted data}
+\code{lower_bound}
+
+\topic{Prefix sums}{$O(1)$ per range}\label{t:prefix}
+\use{Sum of many ranges; 2D: sum of any rectangle.}
+\code{prefix}
+\code{prefix2d}
+
+\topic{Difference array}{$O(1)$ per update}\label{t:diff}
+\use{Many ``add $v$ to $a[l..r]$'', the final values only at the end.}
+\code{diff_array}
+
+\topic{Two pointers / sliding window}{$O(n)$}\label{t:twoptr}
+\use{Best subarray with a rule that stays true when the window shrinks (sum $\le K$ with
+values $\ge 0$, at most $k$ different letters).}
+\code{two_pointers}
+
+\topic{Coordinate compression}{$O(n \log n)$}
+\use{Huge values ($10^9$), few of them: replace by ranks to use as indices.}
+\code{compress}
+
+\topic{Monotonic stack}{$O(n)$}\label{t:mono}
+\use{Nearest bigger element to the right. Left side: loop backwards. Smaller: flip the
+comparison.}
+\code{mono_stack}
+
+\topic{Largest rectangle in a histogram}{$O(n)$}
+\use{Largest free rectangle in a grid: per row, $h[c]$ = free cells straight above; run on
+every row, $O(R \cdot C)$.}
+\code{histogram}
+
+\topic{Sliding window minimum}{$O(n)$}
+\use{Min (or max) of every window of $k$, e.g.\ \texttt{dp[i] = min(dp[i-k..i-1]) + c}.}
+\code{sliding_min}

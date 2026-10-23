@@ -1,0 +1,89 @@
+\section{Dynamic programming}
+
+\subsection{How to build a DP}\label{t:dp}
+\begin{tip}
+\begin{itemize}
+\item \textbf{State:} what you must know to finish the rest. \texttt{dp[i]}; \texttt{dp[i][j]}
+  (two strings, a grid); \texttt{dp[l][r]} (a piece); add weight used, last item, speed\dots
+\item \textbf{Transition:} try every last choice: \texttt{dp[i] = best(cost + dp[smaller])}.
+\item \textbf{Base:} \texttt{dp[0] = 0}. Impossible: \texttt{INF} (min), \texttt{-INF} (max),
+  0 (counting).
+\item \textbf{Order:} fill a state after every state it reads, or memoize.
+\item \textbf{Fast enough:} states $\times$ choices $\le 10^8$. Row $i$ only reads row
+  $i - 1$: keep two rows.
+\item \textbf{The choices:} store \texttt{from[state]}, walk back.
+  \textbf{Counting:} \texttt{\% MOD} after every addition.
+\item \textbf{Games:} winning iff some move leads to a losing position.
+\end{itemize}
+\end{tip}
+
+\topic{Memoized recursion}{states $\times$ choices}
+\use{The recursion is easy but solves the same subproblem again and again: store each answer.}
+\code{dp_memo}
+
+\topic{Best subarray sum}{$O(n)$}
+\use{Largest sum of consecutive elements. Smallest: flip the signs.}
+\code{dp_kadane}
+
+\topic{0/1 knapsack and subset sum}{$O(n \cdot W)$}\label{t:knapsack}
+\use{Each item at most once, weight $\le W$, most value. Subset sum: which totals can be made
+(bitset: 64$\times$ faster). Two halves as equal as possible: the largest
+$s \le \mathit{total}/2$ with \texttt{can[s]}.}
+\code{dp_knapsack}
+\code{dp_subset_sum}
+
+\topic{Coin change}{$O(n \cdot S)$}
+\use{Every coin as often as you like: fewest coins, number of ways.
+Greedy fails: coins 1, 3, 4 for 6.}
+\code{dp_coins}
+
+\topic{Longest increasing subsequence}{$O(n \log n)$}
+\use{Fewest deletions to make it sorted: $n - \mathrm{LIS}$. Boxes in boxes: sort by the
+first value, ties by the second descending, then LIS on the second.}
+\code{dp_lis}
+
+\topic{Longest common subsequence}{$O(n \cdot m)$}
+\use{The longest subsequence two strings (or arrays) share.}
+\code{dp_lcs}
+
+\topic{Edit distance}{$O(n \cdot m)$}
+\use{Fewest insertions, deletions and replacements that turn $a$ into $b$.}
+\code{dp_edit}
+
+\topic{Paths in a grid}{$O(R \cdot C)$}
+\use{Only moves right or down: count paths, most coins. Moves in every direction: BFS or
+Dijkstra.}
+\code{dp_grid}
+
+\topic{Cutting a string into words}{$O(|s| \cdot L)$}
+\use{Split a string into words from a list: possible? how many ways? fewest pieces
+(\texttt{min} instead of \texttt{+})?}
+\code{dp_wordbreak}
+
+\topic{Cutting an array into $k$ parts}{$O(k \cdot n^2)$}
+\use{Consecutive groups, each with a cost: cheapest total. Any number of groups: drop $j$.}
+\code{dp_split}
+
+\topic{Range sums inside a DP}{$O(n)$}
+\use{\texttt{dp[i]} adds up a range of earlier states: keep a prefix sum of \texttt{dp}.}
+\code{dp_prefix}
+
+\topic{Weighted intervals}{$O(n \log n)$}
+\use{Non-overlapping intervals with the most total value. A pass from day $d$ covering $L$
+days: the next state is \texttt{lower\_bound}$(d + L)$.}
+\code{dp_weighted}
+
+\topic{Interval DP}{$O(n^3)$}
+\use{Merging neighbours, cutting a stick, brackets, taking from both ends:
+\texttt{dp[l][r]}, try every split point. $n \le 400$.}
+\code{dp_interval}
+
+\topic{Bitmask DP}{$O(2^n \cdot n^2)$}\label{t:bitmask}
+\use{$n \le 20$ and you must remember which ones are used: visit all (TSP, $n \le 18$),
+jobs to workers ($O(2^n \cdot n)$). Narrow grid: row by row, the state is a mask of the row.}
+\code{dp_bitmask}
+\code{dp_assign}
+
+\topic{Digit DP}{$O(\mathit{digits} \cdot \mathit{states} \cdot 10)$}\label{t:digit}
+\use{Count $x$ in $[A, B]$ with a digit property: \texttt{countUpTo(B) - countUpTo(A - 1)}.}
+\code{dp_digits}

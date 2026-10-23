@@ -1,0 +1,99 @@
+\section{Math and number theory}
+
+\subsection{Integer pitfalls}
+\begin{tabularx}{\linewidth}{@{}Xll@{}}
+\toprule
+you want & not this & but this\\
+\midrule
+$\lceil a/b \rceil$ for $a, b > 0$ & \texttt{ceil(a/b)} & \texttt{(a+b-1)/b}\\
+$\lfloor a/b \rfloor$, $a$ may be $< 0$ & \texttt{a/b} & \texttt{floorDiv(a,b)}\\
+remainder in $[0, m)$ & \texttt{a\%m} & \texttt{md(a,m)}\\
+$a \cdot b$ for two \texttt{int}s & \texttt{a*b} & \texttt{1LL*a*b}\\
+a product up to $10^{36}$ & \texttt{ll} & \texttt{(\_\_int128)a*b}\\
+$\lfloor \sqrt n \rfloor$ & \texttt{(ll)sqrt(n)} & \texttt{isqrt(n)}\\
+$10^{18}$ or $3^k$ & \texttt{pow(10,18)} & a loop, \texttt{modpow}\\
+$a/b < c/d$ ($b, d > 0$) & doubles & \texttt{a*d < c*b}\\
+round a double & \texttt{(ll)x} & \texttt{llround(x)}\\
+\bottomrule
+\end{tabularx}
+\code{math_int}
+
+\topic{gcd, lcm and fractions}{$O(\log n)$}\label{t:gcd}
+\use{Two repeating things line up every $\mathrm{lcm}(a, b)$. All $a_i$ equal mod $m$ iff
+$m \mid \gcd(a_2 - a_1, a_3 - a_1, \dots)$. Steps of $k$ on a circle of $n$ visit
+$n / \gcd(n, k)$ spots.}
+\code{math_gcd}
+\code{math_frac}
+
+\topic{Extended Euclid: $ax + by = c$}{$O(\log n)$}
+\use{Solvable iff $\gcd(a, b) \mid c$. $a x \equiv c \pmod m$ is $a x + m y = c$; with $c = 1$
+it gives $1/a \bmod m$ for any $m$. Smallest $x \ge 0$ has the largest $y$: if that $y < 0$
+there is no solution with $x, y \ge 0$.}
+\code{math_egcd}
+
+\topic{Modular arithmetic}{$O(\log e)$}\label{t:mod}
+\use{\texttt{\% MOD} after every \texttt{+} and \texttt{*}; subtract as
+\texttt{(a - b + MOD) \% MOD}; divide by multiplying with \texttt{inv(b)} (prime \texttt{MOD}).
+Never compare values after \texttt{\%}. $a^e \equiv a^{e \bmod (p-1)} \pmod p$.}
+\code{math_mod}
+
+\subsection{Formulas and numbers}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+$1 + 2 + \dots + n$ & $n(n+1)/2$\\
+$1^2 + 2^2 + \dots + n^2$ & $n(n+1)(2n+1)/6$\\
+$1^3 + 2^3 + \dots + n^3$ & $\bigl(n(n+1)/2\bigr)^2$\\
+$a + (a + d) + \dots$, $k$ terms & $k \cdot (\text{first} + \text{last}) / 2$\\
+$1 + r + r^2 + \dots + r^{n-1}$ & $(r^n - 1)/(r - 1)$\\
+$1 + \frac12 + \frac13 + \dots + \frac1n$ & $\approx \ln n + 0.58$\\
+multiples of $k$ in $[L, R]$ & $\lfloor R/k \rfloor - \lfloor (L-1)/k \rfloor$\\
+\midrule
+primes $\le n$ & 25 ($10^2$), 168 ($10^3$), 78\,498 ($10^6$), 664\,579 ($10^7$)\\
+most divisors & 240 ($10^6$), 1\,344 ($10^9$), 6\,720 ($10^{12}$), 103\,680 ($10^{18}$)\\
+distinct primes & at most 9 ($n \le 10^9$), 15 ($n \le 10^{18}$)\\
+prime moduli & $10^9 + 7$, $10^9 + 9$, $998\,244\,353$\\
+\bottomrule
+\end{tabularx}
+
+\topic{Sieve of Eratosthenes}{$O(N \log \log N)$}\label{t:sieve}
+\use{All primes up to $N$, or factorise many numbers $\le 10^7$ (0.1\,s, 40\,MB).}
+\code{math_sieve}
+
+\topic{Factorising one number}{$O(\sqrt n)$}
+\use{$n \le 10^{12}$. From $n = \prod p_i^{e_i}$: divisors $\prod (e_i + 1)$, divisor sum
+$\prod (p_i^{e_i + 1} - 1)/(p_i - 1)$, $\varphi(n) = n \prod (1 - 1/p_i)$, squarefree iff all
+$e_i = 1$.}
+\code{math_factor}
+
+\topic{Divisors}{$O(\sqrt n)$}
+\use{Try every divisor of $n$ (group sizes, periods). For all $x \le N$ at once: loop over the
+multiples of every $d$, $O(N \log N)$.}
+\code{math_divisors}
+
+\topic{Chinese remainder theorem}{$O(\log m)$}\label{t:crt}
+\use{$x \equiv a_1 \pmod{m_1}$, $x \equiv a_2 \pmod{m_2}$. Solutions repeat every
+$\mathrm{lcm}(m_1, m_2)$; none if the moduli share a factor that the remainders disagree on.}
+\code{math_crt}
+
+\topic{Permutation cycles}{$O(n)$}\label{t:cycles}
+\use{Repeated shuffle: after $k$ steps every element moves $k \bmod L$ along its cycle of
+length $L$. Back to start after the lcm of the lengths. Sorting with swaps:
+$n - \#\mathrm{cycles}$.}
+\code{math_cycles}
+
+\topic{Matrix power}{$O(k^3 \log n)$}\label{t:matrix}
+\use{$f(n) = 2 f(n-1) + 3 f(n-2)$ for $n \le 10^{18}$: first row the coefficients, below it a
+shifted identity; $f(n) = R[0][0] f(1) + R[0][1] f(0)$ for $R = M^{n-1}$. Walks of length $L$:
+$A^L$.}
+\code{math_matrix}
+
+\topic{XOR tricks}{$O(n \log V)$}
+\use{$x \oplus x = 0$; range xor via prefix xors; solve each bit on its own. Tree path
+$u \to v$: $d[u] \oplus d[v]$. Graph walks: insert $d[a] \oplus d[b] \oplus w$ for every non-tree
+edge into the basis.}
+\code{math_xor}
+
+\topic{Big numbers}{$O(\mathit{digits})$}\label{t:big}
+\use{Hundreds of digits. Or submit that problem in Python 3: its integers never overflow.}
+\code{math_bigint}
+\pycode{bignum}

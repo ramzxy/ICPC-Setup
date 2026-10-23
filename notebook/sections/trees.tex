@@ -1,0 +1,68 @@
+\section{Trees and more graphs}
+
+\subsection{Tree facts}\label{t:trees}
+\begin{tip}
+\begin{itemize}
+\item $n$ nodes, $n - 1$ edges. Connected with $n - 1$ edges $\Rightarrow$ a tree.
+\item Exactly one path between two nodes: one BFS gives all distances, also weighted.
+\item Connected graph: $m - (n - 1)$ extra edges, each closes a cycle. Forest of $c$ trees:
+  $n - c$ edges. Few extra edges: try all $2^k$ ways to handle them.
+\item Edge above $v$ is used by $\mathit{sz}[v] \cdot (n - \mathit{sz}[v])$ paths. Summed over
+  all edges: the sum of all pair distances.
+\item Parent list with $p_i < i$: loop $i = n, \dots, 2$ for children before parents.
+\item Trees are bipartite: colour by depth mod 2.
+\end{itemize}
+\end{tip}
+
+\topic{Rooting a tree}{$O(n)$}
+\use{Parent, depth, \texttt{order}. Backwards over \texttt{order}: children before parents
+(sizes, tree DP). Forwards: parents first (rerooting). No recursion.}
+\code{tree_root}
+\code{tree_size}
+
+\topic{DFS order}{$O(n)$}
+\use{Enter / leave times. $u$ is in the subtree of $v$ iff
+\texttt{tin[v] <= tin[u] < tout[v]}: a subtree is a range of an array.}
+\code{tree_dfs}
+
+\topic{Tree DP}{$O(n)$}
+\use{The answer for $v$ follows from its children's answers. Fill backwards over
+\texttt{order}; the answer is at the root.}
+\code{tree_dp}
+
+\topic{Diameter}{$O(n)$}
+\use{Longest path: BFS from any node to the farthest $a$, BFS from $a$ to the farthest $b$.
+The farthest node from any $v$ is $a$ or $b$.}
+\code{tree_diameter}
+
+\topic{LCA and binary lifting}{$O(\log n)$ per query}\label{t:lca}
+\use{Distance between $a$ and $b$, the $k$-th node above $v$. Weighted:
+$w[a] + w[b] - 2\,w[\mathrm{lca}]$. Every node has one next node (functional graph): where
+after $k \le 10^{18}$ steps? \texttt{Jump}.}
+\code{tree_lca}
+\code{graph2_jump}
+
+\topic{Rerooting}{$O(n)$}
+\use{A tree DP answer for every node as the root. Moving the root from \texttt{par[v]} to
+$v$: $\mathit{sz}[v]$ nodes get 1 closer, the other $n - \mathit{sz}[v]$ 1 farther.}
+\code{tree_reroot}
+
+\topic{Strongly connected components}{$O(n + m)$}\label{t:scc}
+\use{Directed graph, nodes that reach each other become one node: the condensation is a DAG.
+To reach everything you need a start in every component with in-degree 0.}
+\code{graph2_scc}
+
+\topic{Euler path}{$O(n + m)$}
+\use{Every edge exactly once. Undirected: 0 or 2 odd-degree nodes (start at one).
+Directed: in $=$ out everywhere, or one start (out $=$ in $+ 1$) and one end. Circuit: all
+even / in $=$ out.}
+\code{graph2_euler}
+
+\topic{Bipartite check}{$O(n + m)$}
+\use{Two groups, every edge between them: possible iff no odd cycle.}
+\code{graph2_bipartite}
+
+\topic{Bipartite matching}{$O(n \cdot m)$}
+\use{Most pairs between two kinds of things. K\"onig: min vertex cover $=$ max matching;
+max independent set $= n -$ max matching.}
+\code{graph2_matching}

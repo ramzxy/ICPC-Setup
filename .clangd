@@ -1,0 +1,11 @@
+CompileFlags:
+  Add:
+    - -std=c++17
+    - -Wall
+    - -Wconversion
+    - -Wfatal-errors
+    - -g
+Diagnostics:
+  UnusedIncludes: None
+  Suppress:
+    - unused-includes

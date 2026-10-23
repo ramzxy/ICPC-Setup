@@ -1,0 +1,24 @@
+\section{Games}
+
+\subsection{Winning and losing}\label{t:games}
+\begin{tip}
+\begin{itemize}
+\item Losing: every move leads to a winning position (or there is no move). Winning: some
+  move leads to a losing one. Fill from the end positions.
+\item Symmetric game: copying the other player's move often wins.
+\item No idea? Print \texttt{win[]} for small $n$ and look for a pattern (often periodic).
+\end{itemize}
+\end{tip}
+
+\topic{Win / lose table}{$O(n \cdot |S|)$}
+\use{One pile, a move takes $s \in S$ stones, who cannot move loses.}
+\code{game_win}
+
+\topic{Nim and Grundy numbers}{$O(n \cdot |S|)$}
+\use{Several independent games: xor of the Grundy numbers, 0 = you lose. Nim: xor of the
+pile sizes; winning move: pile $p$ becomes $p \oplus x$ where $x$ is the xor.}
+\code{game_grundy}
+
+\topic{Taking from both ends}{$O(n^2)$}
+\use{Players take the first or last element, each wants the most.}
+\code{game_ends}

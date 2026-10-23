@@ -1,0 +1,72 @@
+\section{Graphs}
+
+\subsection{Which shortest path?}\label{t:sp}
+\begin{tabularx}{\linewidth}{@{}Xll@{}}
+\toprule
+the graph & use & time\\
+\midrule
+every edge costs 1 & BFS & $O(n+m)$\\
+grid, every step costs 1 & grid BFS & $O(R \cdot C)$\\
+costs only 0 or 1 & 0-1 BFS & $O(n+m)$\\
+all costs $\ge 0$ & Dijkstra & $O(m \log n)$\\
+some costs $< 0$ & Bellman--Ford & $O(n \cdot m)$\\
+all pairs, $n \le 500$ & Floyd--Warshall & $O(n^3)$\\
+no cycles (DAG) & DP in topological order & $O(n+m)$\\
+\bottomrule
+\end{tabularx}
+\begin{tip}
+\begin{itemize}
+\item Many start points: push all of them with distance 0 (multi-source).
+\item From every node to one target: reverse the edges, run from the target.
+\item The path itself: keep \texttt{par[v]}, walk back from the end.
+\item More than the position matters (direction, keys, turns, time mod $k$):
+  the node is the state, e.g.\ \texttt{dist[r][c][dir]}.
+\end{itemize}
+\end{tip}
+
+\subsection{Reading a graph}
+\code{graph_types}
+\code{graph_input}
+
+\topic{BFS}{$O(n+m)$}\label{t:bfs}
+\use{Fewest steps when every edge costs the same.}
+\code{bfs}
+
+\topic{Grid BFS}{$O(R \cdot C)$}\label{t:gridbfs}
+\use{Maze or map of cells. 8 directions: add the diagonals to \texttt{dr}/\texttt{dc}.
+Count islands: start a BFS from every free cell not seen yet.}
+\code{grid_bfs}
+
+\topic{0-1 BFS}{$O(n+m)$}
+\use{Every cost is 0 or 1 (e.g.\ walking is free, breaking a wall costs 1).}
+\code{bfs01}
+
+\topic{Dijkstra}{$O(m \log n)$}
+\use{Weighted edges, all weights $\ge 0$.}
+\code{dijkstra}
+
+\topic{Bellman--Ford}{$O(n \cdot m)$}
+\use{Negative weights, or detect a negative cycle.}
+\code{bellman_ford}
+
+\topic{Floyd--Warshall}{$O(n^3)$}
+\use{Distance between every pair, $n \le 500$. Negative edges are fine.}
+\code{floyd}
+
+\topic{DFS and connected components}{$O(n+m)$}
+\use{Which nodes are connected, how many groups there are.}
+\code{dfs}
+
+\topic{Topological sort}{$O(n+m)$}\label{t:topo}
+\use{``$a$ before $b$'' rules, cycle check, DP on a DAG: for $u$ in \texttt{order}, for
+$u \to v$: \texttt{best[v] = max(best[v], best[u] + 1)}.}
+\code{topo_sort}
+
+\topic{Union-Find (DSU)}{$\approx O(1)$}\label{t:dsu}
+\use{Merge groups and ask ``are $a$ and $b$ connected?'' while edges are added.}
+\code{dsu}
+
+\topic{Minimum spanning tree (Kruskal)}{$O(m \log m)$}\label{t:mst}
+\use{Connect all nodes as cheaply as possible. A node may buy its own source for $c_v$:
+add a node $X$ with edges $(X, v, c_v)$.}
+\code{kruskal}

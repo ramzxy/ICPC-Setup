@@ -1,0 +1,45 @@
+\section{Sorting and greedy}
+
+\subsection{Greedy moves}\label{t:greedy}
+\begin{tip}
+\begin{itemize}
+\item Sort, then take the biggest (or smallest) first.
+\item Pair the smallest with the largest.
+\item End every piece as early as possible.
+\item Give each person the smallest thing that is big enough.
+\item Not sure? Break it with 2--3 tiny cases or a brute force. Fails and $n$ small: DP.
+\end{itemize}
+\end{tip}
+
+\topic{Finding the sort order}{$O(n \log n)$}
+\use{Compare the cost of ``$a$ then $b$'' with ``$b$ then $a$''. Below: $a$ first iff
+$t_a w_b < t_b w_a$. Biggest glued number: sort strings by \texttt{a + b > b + a}.}
+\code{greedy_exchange}
+
+\topic{Most non-overlapping intervals}{$O(n \log n)$}\label{t:intervals}
+\use{Take the interval that ends first. Fewest points hitting every closed $[s, e]$: the same
+code with end $e + 1$.}
+\code{greedy_intervals}
+
+\topic{Merging intervals}{$O(n \log n)$}
+\use{Union of intervals: length covered, gaps, ``is $x$ covered?''.}
+\code{greedy_merge}
+
+\topic{Most intervals at the same time}{$O(n \log n)$}\label{t:sweep}
+\use{Rooms or machines needed at once: $+1$ at a start, $-1$ at an end, sort, running count.}
+\code{greedy_sweep}
+
+\topic{Jobs with deadlines}{$O(n \log n)$}
+\use{Most profit or most jobs in time: by deadline, take every job; when they no longer fit,
+drop the worst one taken.}
+\code{greedy_deadlines}
+
+\topic{Matching with the smallest that fits}{$O((n + m) \log m)$}
+\use{Person $i$ accepts sizes in $[lo_i, hi_i]$, most pairs: smallest $hi$ first, give it the
+smallest item $\ge lo$. Only ``at least $lo$'': $hi = $ \texttt{INF}.}
+\code{greedy_matching}
+
+\topic{The answer is one of the input values}{$O(n \log n)$}
+\use{Choose one number (price, limit, time): try every input value (and $\pm 1$, 0).
+Smallest $\sum |x - a_i|$: $x$ is the median.}
+\code{greedy_candidates}

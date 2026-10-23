@@ -1,0 +1,68 @@
+\section{Contest}
+
+\subsection{How big can $n$ be?}
+About $10^8$ simple steps per second.\par
+\begin{tabularx}{\linewidth}{@{}rlX@{}}
+\toprule
+$n \le$ & time & typical idea\\
+\midrule
+10 & $O(n!)$ & every order (\texttt{next\_permutation})\\
+20 & $O(2^n \cdot n)$ & every subset, bitmask DP\\
+500 & $O(n^3)$ & three loops, Floyd--Warshall\\
+5\,000 & $O(n^2)$ & two loops, $n \times n$ DP\\
+$10^6$ & $O(n \log n)$ & sort, binary search, Dijkstra, set/map\\
+$10^8$ & $O(n)$ & one loop, prefix sums\\
+$10^{18}$ & $O(\log n)$ & formula, binary search on the answer\\
+\bottomrule
+\end{tabularx}\par
+\texttt{int} $\approx 2.1\cdot10^9$, \texttt{long long} $\approx 9.2\cdot10^{18}$,
+\texttt{double} $\approx 15$ digits.
+
+\subsection{Which technique?}
+% one line per clue, so the list can continue in the next column
+\techhead
+\tech{fewest moves / steps, maze}{BFS, grid BFS}{bfs}
+\tech{cheapest route, weighted roads}{Dijkstra (shortest path table)}{sp}
+\tech{``smallest $x$ such that it works''}{binary search on the answer}{binsearch}
+\tech{best total over choices, $n \le 5000$}{DP}{dp}
+\tech{number of ways (mod $10^9+7$)}{DP, counting formulas}{counting}
+\tech{choose items, weight limit}{knapsack}{knapsack}
+\tech{$n \le 20$}{all subsets, bitmask DP}{subsets}
+\tech{$n \le 10$, find the best order}{all orders}{perms}
+\tech{intervals, meetings, schedules}{sort by end, greedy}{intervals}
+\tech{rooms needed at the same time}{sweep $+1 / -1$}{sweep}
+\tech{sort and take, pair up}{greedy moves}{greedy}
+\tech{``connected?'', groups merge}{Union-Find}{dsu}
+\tech{``$a$ before $b$'', dependencies}{topological sort}{topo}
+\tech{connect everything cheaply}{Kruskal}{mst}
+\tech{tree, distances between nodes}{tree facts, LCA}{trees}
+\tech{directed cycles, ``reach each other''}{SCC}{scc}
+\tech{same step repeated $10^{18}$ times}{binary lifting, cycles}{lca}
+\tech{sum of a range, many queries}{prefix sums}{prefix}
+\tech{add to a range, many times}{difference array}{diff}
+\tech{best window / subarray}{two pointers}{twoptr}
+\tech{nearest bigger to the left / right}{monotonic stack}{mono}
+\tech{up then down, few questions}{peak search}{peak}
+\tech{``interactive''}{flush, binary search}{interactive}
+\tech{``modulo $10^9 + 7$''}{modular arithmetic}{mod}
+\tech{repeats every $a$ and every $b$}{gcd / lcm, CRT}{gcd}
+\tech{primes, divisors, factors}{sieve, factorising}{sieve}
+\tech{recurrence, $n$ up to $10^{18}$}{matrix power}{matrix}
+\tech{digits of numbers up to $10^{18}$}{digit DP}{digit}
+\tech{hundreds of digits}{big numbers, Python}{big}
+\tech{probability, expected value}{expected-value DP}{expect}
+\tech{two players, optimal play}{games}{games}
+\tech{substrings, patterns, words}{string tool table}{strings}
+\tech{points, lines, polygons, angles}{geometry rules}{geo}
+\tech{clocks, dates}{time and dates}{time}
+\tech{rotate / mirror a grid}{grids}{grid}
+\tech{text with commas, odd input}{splitting text}{parse}
+
+\subsection{Template}
+\code{template}
+
+\subsection{Terminal setup}
+\shcode{contest}
+
+\subsection{Reading input}
+\code{io}

@@ -1,0 +1,74 @@
+\section{Counting and probability}
+
+\subsection{Counting formulas}\label{t:counting}
+\begin{tabularx}{\linewidth}{@{}Xl@{}}
+\toprule
+what you count & how many\\
+\midrule
+orders of $n$ different things & $n!$\\
+pick $k$ of $n$, order matters & $n! / (n-k)!$\\
+pick $k$ of $n$, order does not matter & $C(n, k)$\\
+subsets of $n$ things & $2^n$\\
+strings of length $k$ over $n$ letters & $n^k$\\
+orders of a word, letter $i$ appears $c_i$ times & $n! / (c_1! \cdots c_m!)$\\
+grid paths, $a$ right and $b$ up & $C(a+b, a)$\\
+$x_1 + \dots + x_k = s$, all $x_i \ge 0$ & $C(s+k-1, k-1)$\\
+$x_1 + \dots + x_k = s$, all $x_i \ge 1$ & $C(s-1, k-1)$\\
+pick $k$ of $n$ kinds, repeats allowed & $C(n+k-1, k)$\\
+$n$ people at a round table & $(n-1)!$\\
+derangements $D_n$ (nobody in place) & $(n-1)(D_{n-1} + D_{n-2})$\\
+Catalan: brackets, binary trees & $C(2n, n) / (n+1)$\\
+\bottomrule
+\end{tabularx}
+\textbf{$D_n$:} 1, 0, 1, 2, 9, 44, 265. \textbf{Catalan:} 1, 1, 2, 5, 14, 42, 132, 429, 1430.
+
+\topic{Binomial coefficients mod $p$}{$O(1)$ per query}
+\use{$C(n, k)$ or $n!$ modulo a prime, $n \le 10^6$.}
+\code{prob_binom}
+
+\topic{Pascal's triangle}{$O(n^2)$}
+\use{Small $n$, a modulus that is not prime, or $C(n, k)$ as a \texttt{double}.}
+\code{prob_pascal}
+
+\topic{Inclusion--exclusion}{$O(2^k \cdot k)$}
+\use{At least one (or none) of $k \le 20$ properties: over every non-empty set $S$, $+$ the
+count with all of $S$ if $|S|$ is odd, $-$ if even. Bounded stars and bars ($x_i \le u$):
+$\sum_j (-1)^j C(k, j)\, C(s - j(u+1) + k - 1, k - 1)$.}
+\code{prob_incl_excl}
+
+\subsection{Probability rules}
+\begin{tip}
+\begin{itemize}
+\item At least one $= 1 - P(\text{none})$, e.g.\ $1 - (1 - p)^n$.
+\item Independent: $P(A \text{ and } B) = P(A) \cdot P(B)$.
+  $P(A \mid B) = P(A \text{ and } B) / P(B)$.
+\item Success with probability $p$ per try: on average $1/p$ tries.
+\item \textbf{Linearity:} $E[X + Y] = E[X] + E[Y]$, always. Expected count
+  $= \sum_{\text{items}} P(\text{item counts})$.
+\item All $k$ sides of a die seen: $k(\frac1k + \frac1{k-1} + \dots + \frac11)$ throws.
+\end{itemize}
+\end{tip}
+
+\topic{Expected-value DP}{states $\times$ moves}\label{t:expect}
+\use{$E[s] = \mathit{cost}(s) + \sum_t P(s \to t) E[t]$, $E = 0$ at the end. Self-loop with
+probability $q$: $E[s] = (c + \mathit{rest}) / (1 - q)$. You choose: take the $\min$.}
+\code{prob_expect_dp}
+
+\topic{Probability DP}{steps $\times$ states}
+\use{Probability of every outcome after random steps: \texttt{nd[t] += dp[s] * q}. The
+values must add up to 1.}
+\code{prob_dp}
+
+\topic{Answers as a fraction mod $p$}{}
+\use{``Print $P \cdot Q^{-1} \bmod p$'': work mod $p$ throughout, $a/b$ becomes
+\texttt{frac(a, b)}, divide by multiplying with \texttt{inv}.}
+\code{prob_modfrac}
+
+\subsection{Doubles}
+\begin{tip}
+\begin{itemize}
+\item Print with \texttt{fixed <{}< setprecision(10)} (in the template).
+\item Tiny probabilities ($0.5^{2000}$) underflow: add logarithms, \texttt{exp} at the end.
+\item Unsure about a formula? Simulate $10^6$ times and compare on the samples.
+\end{itemize}
+\end{tip}

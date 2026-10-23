@@ -1,0 +1,50 @@
+\section{Strings}
+
+\subsection{Which string tool?}\label{t:strings}
+\begin{tabularx}{\linewidth}{@{}Xll@{}}
+\toprule
+the problem & use & time\\
+\midrule
+anagrams, letter frequencies & count array & $O(n)$\\
+letters form a palindrome? & parity mask & $O(n)$\\
+longest palindromic substring & grow from centres & $O(n^2)$\\
+find a pattern once & \texttt{s.find(p)} & $O(nm)$\\
+all occurrences, period & KMP & $O(n + m)$\\
+compare many substrings & hashing & $O(1)$ each\\
+many words, prefix questions & trie & $O(\text{length})$\\
+LCS, edit distance & DP chapter & $O(nm)$\\
+\bottomrule
+\end{tabularx}
+\begin{tip}
+$n \le 1000$: trying every substring with \texttt{substr} is often fine.
+\end{tip}
+
+\topic{Counting letters}{$O(n)$}
+\use{Anagrams, ``can $A$ be made from the letters of $B$?''. Per position:
+\texttt{cnt[i][c]}. In a range: prefix sums per letter.}
+\code{str_count}
+
+\topic{Palindromes}{$O(n^2)$}
+\use{Longest palindrome inside a string: grow from each of the $2n - 1$ centres.}
+\code{str_palindrome}
+
+\topic{KMP}{$O(n + m)$}
+\use{All occurrences of a pattern; the period of a string. $b$ is a rotation of $a$ iff
+$|a| = |b|$ and $b$ occurs in $a + a$.}
+\code{str_kmp}
+
+\topic{Rolling hash}{$O(1)$ per substring}
+\use{Compare many substrings. Longest repeated substring: binary search on the length, hashes
+in a set.}
+\code{str_hash}
+
+\topic{Trie}{$O(\text{length})$}
+\use{Many words, ``how many start with \dots?''. Without a trie: sort, the words starting with
+$p$ are \texttt{lower\_bound(p)} to \texttt{lower\_bound(p + '\{')}.}
+\code{str_trie}
+
+\topic{Palindrome by rearranging}{$O(n)$}
+\use{Possible iff at most one letter has an odd count: one bit per letter,
+\texttt{mask \textasciicircum= 1 <{}< c}. Substring $s[l..r-1]$:
+\texttt{pre[r] \textasciicircum{} pre[l]}.}
+\code{str_parity}

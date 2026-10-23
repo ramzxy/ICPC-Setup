@@ -1,0 +1,81 @@
+\section{Geometry}
+
+\subsection{Rules}\label{t:geo}
+\begin{tip}
+\begin{itemize}
+\item Integer input: \texttt{T = ll}, stay exact (cross, squared lengths, \texttt{area2}).
+  Coordinates up to $10^9$ fit. \texttt{sqrt} and division only at the end.
+\item Doubles: never \texttt{==}; use \texttt{sgn}. \texttt{EPS = 1e-9} for coordinates up to
+  $10^3$, larger coordinates need a larger \texttt{EPS}.
+\item Distances: compare \texttt{norm(p - q) <= r * r}, not square roots.
+\item Radians: \texttt{deg * M\_PI / 180}. Direction: \texttt{atan2(y, x)}, never
+  \texttt{atan(y / x)}.
+\item NaN: \texttt{acos(min(1.0, max(-1.0, v)))}, \texttt{sqrt(max(0.0, v))}.
+\item Polygon: clockwise or not (sign of \texttt{area2})? First point repeated at the end?
+\end{itemize}
+\end{tip}
+
+\topic{Point and cross product}{}
+\use{Copy first. \texttt{dot} $> 0$: angle $< 90^\circ$, $= 0$: perpendicular.
+\texttt{cross(a, b)} $> 0$: $b$ is left of $a$, $= 0$: parallel.}
+\code{geo_point}
+
+\topic{Segment intersection}{$O(1)$}
+\use{Do two segments meet? Is a point on a segment? Exact with integers.}
+\code{geo_segment}
+
+\topic{Lines and distances}{$O(1)$}
+\use{Crossing point of two lines, foot of a perpendicular, distance to a line or segment.}
+\code{geo_line}
+
+\topic{Polygon area, point in polygon}{$O(n)$}
+\use{Shoelace area; inside / on border / outside. In triangle $abc$: \texttt{cross(a,b,q)},
+\texttt{cross(b,c,q)}, \texttt{cross(c,a,q)} all $\ge 0$ or all $\le 0$.}
+\code{geo_polygon}
+
+\subsection{What shape is it?}
+\begin{tip}
+Use \emph{squared} lengths. \textbf{Triangle}, sides sorted $a \le b \le c$: right iff
+$a + b = c$, acute iff $a + b > c$, obtuse iff $a + b < c$; collinear points are no triangle.
+\textbf{Quadrilateral} $ABCD$, sides $s_1..s_4$ ($AB, BC, CD, DA$), diagonals $d_1 = AC$,
+$d_2 = BD$. Most specific first:
+\begin{itemize}
+\item square: 4 sides equal, $d_1 = d_2$; rhombus: 4 sides equal
+\item rectangle: $s_1 = s_3$, $s_2 = s_4$, $d_1 = d_2$; parallelogram: $s_1 = s_3$, $s_2 = s_4$
+\item kite: ($s_1 = s_2$, $s_3 = s_4$) or ($s_2 = s_3$, $s_4 = s_1$)
+\item trapezium: \texttt{cross(B-A, D-C) == 0} or \texttt{cross(C-B, A-D) == 0}
+\end{itemize}
+\end{tip}
+
+\topic{Convex hull}{$O(n \log n)$}
+\use{Smallest convex fence, its length or area. The two farthest points are hull vertices.}
+\code{geo_hull}
+
+\topic{Closest pair of points}{$O(n \log n)$}
+\use{All pairs is fine up to $n \approx 10^4$. Random points: sort by $x$, look back only
+while $(\Delta x)^2 <$ best.}
+\code{geo_closest}
+
+\topic{Angles and rotation}{}
+\use{Direction \texttt{atan2(p.y, p.x)} in $(-\pi, \pi]$. Angle at $b$:
+\texttt{angle(a - b, c - b)}. \texttt{byAngle}: exact sort by direction.}
+\code{geo_angle}
+\code{geo_rotate}
+
+\topic{Circles}{}
+\use{$p$ in circle: \texttt{norm(p - c) <= r * r}. Discs overlap iff
+$|c_1 c_2|^2 \le (r_1 + r_2)^2$. Connected discs: test all pairs, then DSU.}
+\code{geo_circle}
+
+\subsection{Formulas}
+\begin{tip}
+\begin{itemize}
+\item Pick: area $= I + B/2 - 1$, so $I = (|\texttt{area2}| - B + 2)/2$, with
+  $B = \sum_{\text{edges}} \gcd(|\Delta x|, |\Delta y|)$.
+\item $c^2 = a^2 + b^2 - 2ab\cos\gamma$, \quad $a / \sin\alpha = 2R$.
+\item Heron: area $= \sqrt{s(s-a)(s-b)(s-c)}$, $s = (a+b+c)/2$. $R = abc / (4 A)$, $r = A / s$.
+\item Polygon with $n$ corners: inside angles sum to $(n - 2) \cdot 180^\circ$.
+\item Circle: $2\pi r$, $\pi r^2$, arc $r\theta$, sector $r^2\theta/2$, chord
+  $2r\sin(\theta/2)$. Sphere: $4\pi r^2$, $\frac43\pi r^3$.
+\end{itemize}
+\end{tip}

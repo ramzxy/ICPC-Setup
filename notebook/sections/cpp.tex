@@ -1,0 +1,30 @@
+\section{C++ quick reference}
+
+\subsection{Sorting}
+\code{stl_sort}
+
+\subsection{Useful algorithms}
+\code{stl_algo}
+
+\subsection{Containers}
+\use{Sorted / next bigger: \texttt{set}, \texttt{map} ($\log n$). Lookup only:
+\texttt{unordered\_map}. Always the min or max: \texttt{priority\_queue}. Both ends:
+\texttt{deque}.}
+\code{stl_containers}
+
+\subsection{Strings and characters}
+\code{stl_strings}
+
+\subsection{Bits}
+\code{stl_bits}
+
+\subsection{Lambdas}
+\code{stl_lambda}
+
+\topic{Ordered set}{$O(\log n)$}
+\use{The $k$-th smallest, or how many are below $x$, while inserting and erasing.}
+\code{stl_oset}
+
+\topic{Hash for pair keys}{$O(1)$}
+\use{\texttt{unordered\_map} with \texttt{pair} keys does not compile without it.}
+\code{stl_pairhash}
