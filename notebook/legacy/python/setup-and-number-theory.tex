@@ -1,0 +1,112 @@
+\topicgroup{Integer equations}
+\formula{N1}{Solve $ax+by=c$ in integers}
+\symbols{$a,b,c$ given integers, $(a,b)\ne(0,0)$;
+$g=\gcd(a,b)>0$ must divide $c$; $(x_0,y_0)$ one solution;
+$t$ any integer. All solutions:}
+\[
+ x=x_0+(b/g)t,\qquad y=y_0-(a/g)t.
+\]
+\hint{For bounds $L\le x_0+ht\le R$, $h>0$:
+$\lceil(L-x_0)/h\rceil\le t\le\lfloor(R-x_0)/h\rfloor$.
+Intersect $t$ ranges for $x,y$.}
+
+\topicgroup{Modulo and totients}
+Moduli are positive integers; exponents are integers $e\ge0$.
+\formula{N2}{Count integers coprime to $n$: totient}
+\symbols{$n=\prod_i p_i^{e_i}\ge1$; distinct primes $p_i$,
+exponents $e_i\ge1$; $d$ runs over positive divisors.}
+$\varphi(n)=\#\{1\le x\le n:\gcd(x,n)=1\}$; $\varphi(1)=1$.
+\[
+ \varphi(n)=n\prod_{p\mid n}(1-1/p)
+ =\prod_i p_i^{e_i-1}(p_i-1).
+\]
+$\varphi(p^k)=p^{k-1}(p-1)$ for prime $p$, $k\ge1$;
+$\sum_{d\mid n}\varphi(d)=n$.
+$\gcd(a,b)=1\Rightarrow\varphi(ab)=\varphi(a)\varphi(b)$.
+
+\formula{N3}{Invert / reduce a power: Euler, Fermat}
+\symbols{$a$ integer base, $m>1$ modulus, $p$ prime;
+$a^{-1}$ is a value whose product with $a$ is 1 modulo $m$.}
+\textbf{Require $\gcd(a,m)=1$:}
+\[
+ a^{\varphi(m)}\equiv1,\qquad
+ a^e\equiv a^{e\bmod\varphi(m)}\pmod m.
+\]
+Inverse: $a^{-1}\equiv a^{\varphi(m)-1}\pmod m$.
+Prime $p$: $a^p\equiv a\pmod p$ always;
+$a^{p-1}\equiv1\pmod p$ if $p\nmid a$.
+
+\formula{N4}{Solve / cancel congruences; merge by CRT}
+\symbols{$a,b$ known integers; $m,n$ moduli; $x,y$ unknown
+integers; $g=\gcd(a,m)$; $x_0$ one solution.}
+$ax\equiv b\pmod m$: no solution if $g\nmid b$.
+Otherwise solve $(a/g)x\equiv b/g\pmod{m/g}$:
+$x=x_0+t(m/g)$, $t=0,\ldots,g-1$: $g$ residues modulo $m$.
+\[
+ ax\equiv ay\pmod m\iff x\equiv y\pmod{m/g}.
+\]
+\hint{CRT: $x\equiv a\pmod m$, $x\equiv b\pmod n$ are compatible
+iff $\gcd(m,n)\mid(b-a)$; period $\operatorname{lcm}(m,n)$.}
+
+\formula{N5}{Power period / noncoprime bases}
+\symbols{$d=\operatorname{ord}_m(a)$: smallest positive exponent
+giving 1; $q$ prime divisor of $d$; $p^k$ prime-power modulus.}
+For $m>1$, $\gcd(a,m)=1$: $d\mid\varphi(m)$.
+\hint{Start $d=\varphi(m)$; repeatedly divide by $q$ if
+$a^{d/q}\equiv1\pmod m$.}
+For $a\ge1$, write $a=p^su$, $p\nmid u$:
+\[
+ a^e\equiv\begin{cases}0,&se\ge k,\\p^{se}u^e,&se<k\end{cases}
+ \pmod{p^k}.
+\]
+\hint{$s$ counts factors of $p$ in $a$; reduce only $u$'s exponent;
+merge prime powers by CRT.}
+
+\topicgroup{Divisors and gcd sums}
+\formula{D1}{Undo divisor sums: M\"obius inversion}
+\symbols{$n\ge1$ integer; $d$ positive divisor; $r$ distinct
+prime-factor count; $f,F$ arithmetic functions.}
+$\mu(1)=1$; $\mu(n)=0$ if any prime square divides $n$;
+otherwise $\mu(n)=(-1)^r$.
+Also $\sum_{d\mid n}\mu(d)=[n=1]$.
+\[
+ \begin{aligned}
+ F(n)&=\textstyle\sum_{d\mid n}f(d)\\
+ &\iff f(n)=\textstyle\sum_{d\mid n}\mu(d)F(n/d).
+ \end{aligned}
+\]
+Multiplicative $f$: $f(1)=1$ and $f(ab)=f(a)f(b)$ for coprime
+$a,b$; compute from the prime powers in $n$.
+
+\formula{D2}{Count coprime values / pairs; sum gcds}
+\symbols{$N,M,m\ge1$ integers; $(x,y)$ ordered pair with
+$1\le x\le N$, $1\le y\le M$;
+$h_d=\lfloor N/d\rfloor\lfloor M/d\rfloor$.}
+\[
+ \#\{1\le x\le N:\gcd(x,m)=1\}
+ =\textstyle\sum_{d\mid m}\mu(d)\lfloor N/d\rfloor.
+\]
+\[
+ \begin{aligned}
+ \#\{\gcd(x,y)=1\}&=\textstyle\sum_{d\le\min(N,M)}\mu(d)h_d,\\
+ \textstyle\sum_{x=1}^N\sum_{y=1}^M\gcd(x,y)
+ &=\textstyle\sum_{d\le\min(N,M)}\varphi(d)h_d.
+ \end{aligned}
+\]
+For gcd exactly $g\ge1$, use the coprime-pair formula with
+$N\leftarrow\lfloor N/g\rfloor$, $M\leftarrow\lfloor M/g\rfloor$.
+
+\formula{D3}{Group floors / count $xy\le N$}
+\symbols{$N\ge1$ bound; $l,r$ first/last index of a block;
+$q$ common quotient; $s=\lfloor\sqrt N\rfloor$;
+$\tau(k)$ divisor count; $x,y$ positive integers, ordered.}
+\[
+ q=\lfloor N/l\rfloor,\qquad r=\lfloor N/q\rfloor.
+\]
+Then $\lfloor N/i\rfloor=q$ for $l\le i\le r$.
+Start $l=1$; advance $l=r+1$: $O(\sqrt N)$ blocks.
+\[
+ \textstyle\sum_{i=1}^N\lfloor N/i\rfloor
+ =\sum_{k=1}^N\tau(k)
+ =2\sum_{i=1}^{s}\lfloor N/i\rfloor-s^2.
+\]

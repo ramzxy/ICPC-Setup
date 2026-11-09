@@ -1,0 +1,16 @@
+\topicgroup{Python setup}
+\formula{U1}{Create, check and run a solution}
+Practice: \texttt{bash setup.sh}, then a new Bash/zsh terminal.
+Contest: save U2 as \texttt{\~{}/template.py}; paste:
+\lstinputlisting[language=bash,firstline=3]{../code/sh/python_contest.sh}
+\hint{\texttt{mkp a}: create \texttt{a/a.py};
+\texttt{cpy a}: syntax check; \texttt{rp a}: run;
+\texttt{rp a 1}: read \texttt{a/1.in}.
+C++: \texttt{mk a}, \texttt{c a}, \texttt{r a [1]} (original setup).}
+
+\formula{U2}{Python template / terminal debugging}
+\lstinputlisting{../code/py/template.py}
+\hint{\texttt{rp} enables \texttt{dbg} on stderr;
+\texttt{rp a 1 > a/1.out} saves output, keeps debug in terminal.
+Submit \texttt{a/a.py}; ordinary \texttt{python3} leaves debug off.
+Buffered input returns bytes.}

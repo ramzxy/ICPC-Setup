@@ -1,0 +1,154 @@
+\topicgroup{Graph counts}
+\symbols{Simple undirected graph: no loops/parallel edges.
+$V,E$: vertex/edge sets; $n=|V|$; $m=|E|$; $c$: components; $d_v$: degree.
+$\#C_k$: simple $k$-cycles, rotations/reversals identified.}
+
+\formula{G1}{Independent cycles / degrees / cuts}
+\[
+ r=m-n+c,\qquad \sum_v d_v=2m.
+\]
+\symbols{$r$: independent cycles, or edges to remove for a spanning forest.}
+\hint{Even-degree edge subsets: $2^r$, including empty.
+$r$ is not the total simple-cycle count. Odd-degree vertex count is even.
+A cut separates a vertex subset from its complement; cycles cross it
+evenly. Cut-space dimension: $n-c$. Bridges belong to no cycle.}
+
+\formula{G2}{Triangles}
+\symbols{$N(v)$: neighbours; $a_{uv}=|N(u)\cap N(v)|$:
+common-neighbour count. $A$: $0/1$ adjacency matrix, diagonal 0.
+$\operatorname{tr}$: diagonal sum.}
+\[
+ \#C_3=\frac13\sum_{\{u,v\}\in E}a_{uv}
+      =\frac{\operatorname{tr}(A^3)}6.
+\]
+
+\formula{G3}{Four-cycles / walks}
+\[
+ \begin{aligned}
+ \#C_4&=\tfrac12\textstyle\sum_{u<v}\tbinom{a_{uv}}2,\\
+       &=\tfrac{\operatorname{tr}(A^4)+2m-2\sum_v d_v^2}{8}.
+ \end{aligned}
+\]
+\hint{$u<v$: unordered vertex pairs. Bipartite: sum pairs in one side
+only, omit $1/2$. Chords allowed.
+$(A^k)_{uv}$: length-$k$ walks, allowing repetitions.
+$\operatorname{tr}(A^k)/(2k)$ is not a general simple-cycle formula.}
+
+\formula{G4}{Complete-graph cycles}
+\symbols{$K_n$: every pair joined; $K_{a,b}$: complete bipartite,
+side sizes $a,b$. Ranges: $3\le k\le n$ and $2\le k\le\min(a,b)$,
+respectively.}
+\[
+ \begin{aligned}
+ \#C_k(K_n)&=\tfrac{n!}{2k(n-k)!},\\
+ \#C_{2k}(K_{a,b})&=\tbinom ak\tbinom bk\tfrac{k!(k-1)!}{2}.
+ \end{aligned}
+\]
+\hint{Hamilton cycles (all vertices): $(n-1)!/2$, $n\ge3$.
+Complete directed graph with both arcs per pair: replace $2k$ by $k$
+for $k\ge3$; reversal is distinct.
+Labeled simple graphs on $n$ vertices: $2^{\binom n2}$.}
+
+\topicgroup{Trees and planar graphs}
+\formula{G5}{Labeled trees / prescribed degrees}
+\symbols{Labels distinguish vertices; $n\ge2$.
+$d_i\ge1$: required degree of label $i$; $\sum_i d_i=2n-2$.}
+\hint{Cayley: $n^{n-2}$ labeled trees; $n^{n-1}$ with a chosen root.
+Both counts are 1 for $n=1$.}
+\[
+ \#\text{trees with degrees }d_i
+   =\frac{(n-2)!}{\prod_i(d_i-1)!}.
+\]
+\hint{Pr\"ufer sequence: $n-2$ labels; label $i$ occurs $d_i-1$ times.
+Leaves are exactly absent labels. For $n\ge2$:}
+\[
+ \#\text{leaves}=2+\sum_{v:d_v\ge3}(d_v-2).
+\]
+
+\formula{G6}{Spanning trees (Matrix--Tree)}
+\symbols{$\tau(G)$: spanning-tree count; $C_n$: one $n$-cycle.
+Laplacian $L$: $L_{ii}=d_i$; $L_{ij}=-1$ if adjacent, 0 otherwise.
+$L^{(j)}$: remove row and column $j$; $\det$: determinant.}
+\[
+ \begin{aligned}
+ \tau(G)&=\det L^{(j)},\\
+ \tau(K_n)&=n^{n-2} &&(n\ge2),\\
+ \tau(K_{a,b})&=a^{b-1}b^{a-1} &&(a,b\ge1),\\
+ \tau(C_n)&=n &&(n\ge3).
+ \end{aligned}
+\]
+\hint{Disconnected $G$: 0. Full $\det L=0$.
+Elimination modulo a prime: $O(n^3)$; row swaps flip the sign.
+Counts all spanning trees, not only minimum-weight trees.}
+
+\formula{G7}{Planar faces / edge bounds}
+\symbols{$f$: faces including outside; planar means drawable without
+crossings.}
+\[
+ n-m+f=1+c.
+\]
+For simple planar graphs, $n\ge3$:
+\[
+ m\le3n-6;\qquad m\le2n-4\ \text{if bipartite}.
+\]
+\hint{Bounds do not prove planarity. Triangulation (all faces triangles):
+$m=3n-6$, $f=2n-4$.
+Every nonempty simple planar graph has a vertex of degree at most 5.}
+
+\topicgroup{Partitions and symmetry}
+\formula{C1}{Partitions / onto functions}
+\symbols{$n$: distinct objects; $k$: groups/cycles.
+$c(n,k)$: permutations with $k$ cycles (unsigned Stirling I).
+$S(n,k)$: $k$ nonempty unlabeled groups (Stirling II).
+Bell $B_n=\sum_kS(n,k)$: all partitions.}
+\[
+ \begin{aligned}
+ c(n,k)&=c(n-1,k-1)+(n-1)c(n-1,k),\\
+ S(n,k)&=S(n-1,k-1)+kS(n-1,k).
+ \end{aligned}
+\]
+\hint{Both $(0,0)=1$; other $k=0$ or $k>n$ entries: 0. Use $0^0=1$.}
+\[
+ \textstyle k!S(n,k)=\sum_{j=0}^k(-1)^j\tbinom kj(k-j)^n.
+\]
+\hint{Onto: $n$ objects map to $k$ labeled targets, all used;
+$j$: excluded targets in inclusion--exclusion.}
+
+\formula{C2}{Prescribed permutation cycles}
+\symbols{$a_j\ge0$: cycles of length $j$; $\sum_jja_j=n$.
+$H_n=\sum_{j=1}^n1/j$.}
+\[
+ \#\text{permutations}=\frac{n!}{\prod_j j^{a_j}a_j!}.
+\]
+\hint{Uniform random permutation: expected $j$-cycles $=1/j$ for
+$1\le j\le n$; expected total cycles $=H_n$.}
+
+\formula{C3}{Symmetric objects (Burnside)}
+\symbols{$X$: objects; $G$: finite group of allowed symmetries.
+$\operatorname{Fix}(g)$: objects unchanged by symmetry $g$.
+Orbit: objects equivalent under the symmetries.}
+\[
+ \#\text{orbits}=\frac1{|G|}\sum_{g\in G}|\operatorname{Fix}(g)|.
+\]
+\hint{Do not just divide $|X|$ by $|G|$.
+A position permutation with $z$ cycles fixes $q^z$ colorings with $q$ colors.}
+
+\formula{C4}{Necklaces / bracelets}
+\symbols{$n\ge1$: positions; $q$: colors; $r$: rotation offset;
+$d$: divisor of $n$. $R,F$: total fixed colorings over rotations,
+reflections; $\varphi$: totient (N2).}
+\[
+ \textstyle R=\sum_{r=0}^{n-1}q^{\gcd(n,r)}
+   =\sum_{d\mid n}\varphi(d)q^{n/d}.
+\]
+\hint{Necklaces: $R/n$ (rotations equivalent).
+Bracelets: $(R+F)/(2n)$ (also reflections).}
+\[
+ F=\begin{cases}
+ n q^{(n+1)/2},&n\text{ odd},\\
+ \frac n2(q^{n/2}+q^{n/2+1}),&n\text{ even}.
+ \end{cases}
+\]
+\hint{Modulo prime $p$: invert denominator $d=n$ or $2n$ only if
+$p\nmid d$; otherwise compute numerator modulo $pd$ and
+integer-divide the residue by $d$ (B5).}

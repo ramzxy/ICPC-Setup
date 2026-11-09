@@ -1,0 +1,268 @@
+% C++17 language and library lookup; examples use the contest template.
+\section{C++17 language reference}
+Examples assume \texttt{using namespace std;} and
+\texttt{using ll = long long;}. \texttt{<bits/stdc++.h>} is a GCC convenience
+header; it is not part of ISO C++. Prefer Python for exact huge integers.
+
+\subsection{Input, output and terminal debugging}\label{cpp:io}
+\begin{lstlisting}[style=cpp]
+ios::sync_with_stdio(false);
+cin.tie(nullptr);
+int n; string word;
+cin >> n >> word;                 // whitespace-separated
+vector<int> a(n);
+for (int& x : a) cin >> x;
+cout << n << ' ' << word << '\n';
+cout << fixed << setprecision(10) << 1.0 / 3 << '\n';
+int x;
+while (cin >> x) { /* integers until EOF */ }
+\end{lstlisting}
+\hint{Use \texttt{'\textbackslash n'} for ordinary output;
+\texttt{endl} also flushes. Interactive output must flush:
+\texttt{cout << "? " << x << endl;}. After disabling synchronization,
+avoid mixing \texttt{cin/cout} with \texttt{scanf/printf}.}
+\begin{lstlisting}[style=cpp]
+int n; cin >> n;
+cin.ignore(numeric_limits<streamsize>::max(), '\n');
+string line;
+getline(cin, line);               // next line, spaces retained
+// getline(cin >> ws, line);       // skips ALL leading whitespace
+cerr << "n = " << n << '\n';      // stderr: stays in terminal
+dbg(n);                          // template: only with -DLOCAL
+\end{lstlisting}
+\hint{\texttt{>>} leaves the newline behind. \texttt{getline} removes its
+delimiter but preserves other spaces; \texttt{>> ws} also skips blank lines.
+Redirecting stdout with \texttt{> out.txt} leaves stderr visible.
+Raw \texttt{cerr} always runs; \texttt{dbg} is conditional on \texttt{LOCAL}.}
+
+\subsection{Declarations, loops and references}\label{cpp:syntax}
+\begin{lstlisting}[style=cpp]
+using ll = long long;
+using pii = pair<int, int>;
+vector<int> a = {3, 1, 4};
+const int MOD = 1000000007;
+auto n = a.size();                // unsigned size type
+for (int i = 0; i < int(a.size()); ++i) { /* a[i] */ }
+for (int x : a) { /* copy of each value */ }
+for (int& x : a) ++x;             // change original elements
+for (const auto& x : a) { /* read without copying */ }
+auto copy = a;                    // independent vector copy
+auto& alias = a;                  // another name for a
+swap(a[0], a[1]);
+\end{lstlisting}
+\hint{\texttt{const T\&} passes a read-only reference; \texttt{T\&} allows
+mutation. Passing \texttt{vector<T>} by value copies it. Local scalar
+variables are uninitialized until assigned. Indices run from 0 to size$-1$;
+\texttt{v[i]} does not check bounds, \texttt{v.at(i)} does.}
+\begin{lstlisting}[style=cpp]
+ll square(ll x) { return x * x; }  // define outside main
+void add_one(vector<int>& a) {
+    for (int& x : a) ++x;
+}
+int offset = 5;
+auto shifted = [offset](int x) { return x + offset; };
+auto change = [&](int x) { offset += x; };  // capture by ref
+auto twice = [](auto x) { return x + x; }; // generic lambda
+\end{lstlisting}
+\hint{\texttt{[x]} copies the current value of \texttt{x};
+\texttt{[\&x]} refers to the original. A reference capture must not outlive
+its variable. Use \texttt{struct State \{ int x, y; \};} for named fields.}
+
+\subsection{Vectors, grids, pairs and tuples}\label{cpp:containers}
+\begin{lstlisting}[style=cpp]
+vector<int> v(5, -1);             // five copies of -1
+v.push_back(7); v.pop_back();
+v.resize(8, 0);                  // change size; fill new items
+v.reserve(100);                  // capacity only; no new items
+v.assign(3, 9);                  // replace with [9,9,9]
+v.insert(v.begin() + 1, 4);       // O(n), insert before index 1
+v.erase(v.begin() + 1);          // O(n), remove index 1
+int first = v.front(), last = v.back(); // require nonempty
+vector<vector<int>> grid(3, vector<int>(4, 0));
+pair<int, int> p = {2, 7};
+auto [x, y] = p;                 // C++17 structured binding
+tuple<int, int, string> t = {1, 2, "a"};
+auto [u, w, name] = t;
+get<0>(t) = 9;                   // index is compile-time
+tie(x, y) = p;                   // assign existing variables
+\end{lstlisting}
+\hint{Each grid row is independent. \texttt{auto [x,y]} copies fields;
+\texttt{auto\& [x,y]} refers to them. Pairs, tuples, vectors and strings
+compare lexicographically. Reallocating a vector invalidates its references
+and iterators; erasing invalidates positions at or after the erased element.}
+
+\subsection{Strings and characters}\label{cpp:strings}
+\begin{lstlisting}[style=cpp]
+string s = "banana";
+s += '!'; s.pop_back();
+s.substr(1, 3);                  // "ana": start, length
+auto pos = s.find("na");         // 2; string::npos if absent
+if (pos != string::npos) s.replace(pos, 2, "X");
+s.insert(0, "pre"); s.erase(0, 3);
+reverse(s.begin(), s.end());
+string digits = to_string(123);
+ll value = stoll("-123");        // decimal by default
+int d = '7' - '0';               // digit character -> 7
+char c = 'A';
+c = char(tolower((unsigned char)c));
+bool digit = isdigit((unsigned char)c);
+\end{lstlisting}
+\hint{C++ strings are mutable byte sequences; single quotes create a
+character, double quotes a string. \texttt{substr} takes a length, not an
+end index. Check \texttt{npos} before converting a found position to
+\texttt{int}. \texttt{stoi/stoll} throw on invalid or out-of-range input.}
+
+\subsection{Ordered sets, maps and multisets}
+\begin{lstlisting}[style=cpp]
+set<int> s = {2, 5, 9};           // sorted, unique
+s.insert(4); s.erase(9);
+bool found = s.find(5) != s.end(); // C++17: no contains()
+auto it = s.lower_bound(3);       // first >= 3, or end()
+if (it != s.end()) cout << *it << '\n';
+if (!s.empty()) cout << *s.begin() << ' ' << *s.rbegin();
+multiset<int> ms = {2, 2, 7};
+auto one = ms.find(2);
+if (one != ms.end()) ms.erase(one); // erase ONE occurrence
+ms.erase(2);                     // erase ALL remaining 2s
+map<string, int> counts;
+counts["apple"]++;               // missing key inserts value 0
+auto hit = counts.find("pear");   // lookup without insertion
+if (hit != counts.end()) cout << hit->second;
+for (const auto& [key, val] : counts) { /* sorted keys */ }
+map<pair<int, int>, int> at;      // pair keys work directly
+\end{lstlisting}
+\hint{Ordered lookup/insert costs $O(\log n)$. Iterators are not indices:
+\texttt{it - s.begin()} is invalid, and \texttt{distance} is $O(n)$.
+Use \texttt{s.lower\_bound(x)}, not the generic algorithm on set iterators.
+Never dereference \texttt{end()} or erase a failed \texttt{find}.}
+\begin{lstlisting}[style=cpp]
+unordered_map<string, int> freq; // average O(1) lookup
+freq.reserve(10000);
+freq["a"]++;
+bool has = freq.find("a") != freq.end();
+unordered_set<int> seen;
+seen.insert(4); seen.erase(4);
+\end{lstlisting}
+\hint{Hash containers have no sorted order; worst-case operations can be
+$O(n)$. Rehashing invalidates iterators. \texttt{pair} and \texttt{vector}
+have no standard C++17 hash; use an ordered map or supply a custom hash.}
+
+\subsection{Queues, stacks, deques and heaps}
+\begin{lstlisting}[style=cpp]
+deque<int> d = {1, 2};
+d.push_front(0); d.push_back(3);
+d.pop_front(); d.pop_back();      // O(1) ends; d[i] is O(1)
+queue<int> q;
+q.push(4); int a = q.front(); q.pop();
+stack<int> st;
+st.push(5); int b = st.top(); st.pop();
+priority_queue<int> maxq;
+priority_queue<int, vector<int>, greater<int>> minq;
+maxq.push(7); maxq.push(2);
+int largest = maxq.top(); maxq.pop();
+using Item = pair<ll, int>;       // distance, vertex
+priority_queue<Item, vector<Item>, greater<Item>> heap;
+heap.push({12, 3});
+auto [dist, vertex] = heap.top(); heap.pop();
+\end{lstlisting}
+\hint{All \texttt{pop()} operations return nothing: read the value first.
+Check \texttt{empty()} before \texttt{front/top/pop}. Heap push/pop costs
+$O(\log n)$; top is $O(1)$. Pair heaps break ties by the second field.}
+
+\subsection{Sorting and binary search}\label{cpp:order}
+\begin{lstlisting}[style=cpp]
+vector<int> v = {5, 1, 4, 1};
+sort(v.begin(), v.end());         // [1,1,4,5]
+sort(v.begin(), v.end(), greater<int>()); // descending
+stable_sort(v.begin(), v.end());  // equal keys keep input order
+vector<pair<int, int>> a = {{1, 9}, {2, 3}, {3, 3}};
+sort(a.begin(), a.end(), [](const auto& x, const auto& y) {
+    if (x.second != y.second) return x.second < y.second;
+    return x.first > y.first;    // tie: first field descending
+});
+\end{lstlisting}
+\hint{A comparator must give a strict weak ordering: \texttt{cmp(x,x)}
+must be false; use \texttt{<}, not \texttt{<=}. Do not subtract keys to
+compare them: subtraction can overflow.}
+\begin{lstlisting}[style=cpp]
+vector<int> a = {1, 2, 2, 5};      // sorted ascending
+int x = 2;
+auto lo = lower_bound(a.begin(), a.end(), x); // first >= x
+auto hi = upper_bound(a.begin(), a.end(), x); // first > x
+int first = int(lo - a.begin());  // 1; size() if none
+int count = int(hi - lo);         // 2 equal values
+bool exists = binary_search(a.begin(), a.end(), x);
+int k = 2;                       // zero-based, 0 <= k < size
+nth_element(a.begin(), a.begin() + k, a.end());
+int kth = a[k];                  // kth smallest; not fully sorted
+\end{lstlisting}
+\hint{Binary search needs a range sorted using the same comparison.
+Iterator ranges are half-open: \texttt{[begin,end)}. Vector binary search
+costs $O(\log n)$; insertion or erasure in its middle costs $O(n)$.}
+
+\subsection{Algorithm utilities}
+\begin{lstlisting}[style=cpp]
+vector<int> v = {3, 1, 3, 4};
+ll sum = accumulate(v.begin(), v.end(), 0LL);
+int mx = *max_element(v.begin(), v.end()); // nonempty
+int threes = count(v.begin(), v.end(), 3);
+bool has = find(v.begin(), v.end(), 1) != v.end();
+fill(v.begin(), v.end(), 7);
+iota(v.begin(), v.end(), 0);      // 0,1,2,3
+reverse(v.begin(), v.end());
+v.erase(remove(v.begin(), v.end(), 2), v.end()); // drop all 2s
+sort(v.begin(), v.end());
+v.erase(unique(v.begin(), v.end()), v.end());   // deduplicate
+ll g = gcd(12LL, 18LL), l = lcm(4LL, 6LL);
+vector<int> p = {0, 1, 2};        // start sorted
+do { /* use p */ } while (next_permutation(p.begin(), p.end()));
+\end{lstlisting}
+\hint{\texttt{remove} and \texttt{unique} return a new logical end;
+\texttt{erase} actually shrinks the vector. \texttt{unique} only merges
+adjacent equal values. The initial value of \texttt{accumulate} selects
+its arithmetic type: \texttt{0LL} for \texttt{long long}.}
+
+\subsection{Integer arithmetic, limits and modulo}\label{cpp:numbers}
+\begin{lstlisting}[style=cpp]
+int x = 1000000000, y = 1000000000;
+ll product = 1LL * x * y;         // widen BEFORE multiplication
+ll big = numeric_limits<ll>::max();
+const ll INF = (1LL << 62);       // chosen sentinel, not infinity
+int a = -7, b = 3;
+int q = a / b, rem = a % b;       // -2, -1: division truncates
+// For integer a, positive b:
+int floor_div = a / b - (a % b < 0);
+int ceil_div = a / b + (a % b > 0);
+ll m = 1000000007, value = -12;   // m > 0
+ll r = value % m; if (r < 0) r += m; // normalize to [0,m)
+__int128 wide = (__int128)product * product; // GCC extension
+ll reduced = (ll)(wide % m);
+\end{lstlisting}
+\hint{Signed overflow is undefined behavior, including intermediate
+expressions. Assigning an overflowing \texttt{int} product to \texttt{ll}
+does not repair it. Integer division truncates even when assigned to
+\texttt{double}: use \texttt{double(a)/b}. \texttt{pow} uses floating point;
+it is not exact integer exponentiation or modular exponentiation.
+C++17 has no standard arbitrary-precision integer type.}
+
+\subsection{Bitmasks and bit counts}
+\begin{lstlisting}[style=cpp]
+unsigned long long mask = 0;
+int i = 5;                       // require 0 <= i < 64
+mask |= 1ULL << i;               // set
+mask &= ~(1ULL << i);            // clear
+mask ^= 1ULL << i;               // toggle
+bool set = (mask & (1ULL << i)) != 0;
+int ones = __builtin_popcountll(mask); // GCC, 64-bit operand
+if (mask) {
+    int low = __builtin_ctzll(mask);  // lowest set bit index
+    int high = 63 - __builtin_clzll(mask); // highest set bit
+}
+bitset<128> bits;
+bits.set(7); bits.flip(2); bits.reset(7);
+auto count = bits.count();
+\end{lstlisting}
+\hint{\texttt{ctz/clz} require a nonzero operand. Use unsigned operands
+for bit operations; shifting by a negative amount or by the type's width
+is invalid. The builtins above are GCC extensions; C++20
+\texttt{popcount/countr\_zero} are outside the C++17 baseline.}

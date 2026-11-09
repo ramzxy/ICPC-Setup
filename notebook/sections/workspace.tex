@@ -1,0 +1,81 @@
+\section{Workspace and setup}\label{setup:workspace}
+\subsection{One folder, two templates}
+Use Bash on the contest machine. Make a workspace and save the templates
+below in its \texttt{tmpl/} directory:
+\begin{lstlisting}[language=bash]
+mkdir -p contest/tmpl
+cd contest
+python3 --version
+g++ --version
+\end{lstlisting}
+\hint{\texttt{tmpl/} contains only \texttt{template.py} and
+\texttt{template.cpp}. At the contest, type them from this guide into your
+editor. During practice, \texttt{source /path/to/ICPC-Setup/setup.sh .}
+copies them here and enables the commands below. No startup file or
+home-directory template is required.}
+
+\subsection{Python: tmpl/template.py}\label{setup:python}
+\lstinputlisting[style=python]{../tmpl/template.py}
+\hint{Normal \texttt{input()} returns text without its final newline.
+\texttt{int(input())} reads a decimal integer, including a minus sign.
+Adapt \texttt{solve()} to the statement; do not assume multiple test cases.
+The commented line reader is optional and also returns text.}
+
+\subsection{C++17: tmpl/template.cpp}\label{setup:cpp}
+\lstinputlisting[style=cpp]{../tmpl/template.cpp}
+
+\subsection{Enter these commands in the terminal}\label{setup:commands}
+From the workspace root, paste or type this block once in each terminal.
+It remembers that workspace; no separate shell file is needed.
+\par\noindent\begin{minipage}{\linewidth}
+\lstinputlisting[language=bash,firstline=6,lastline=25]{../setup.sh}
+\end{minipage}\par
+\noindent\begin{minipage}{\linewidth}
+\lstinputlisting[language=bash,firstline=26,lastline=37]{../setup.sh}
+\end{minipage}\par
+\noindent\begin{minipage}{\linewidth}
+\lstinputlisting[language=bash,firstline=38,lastline=47]{../setup.sh}
+\end{minipage}\par
+\hint{Hooked arrows mark printed line wraps: join those fragments into one
+shell line when typing the commands.}
+\hint{If needed, set \texttt{PYTHON} and \texttt{CXX} to available executable
+names (for example a versioned GCC). Check the judge's supported language
+versions during practice. The C++ command uses C++17 and enables local debugging.}
+
+\subsection{Create A through the last problem letter}
+\begin{lstlisting}[language=bash]
+tmpl M                   # A/ through M/, both language files
+tmpl                     # default: A/ through Z/
+rp A                     # Python; input from the terminal
+rc a                     # compile and run C++ for A
+rp A A/1.in               # input filename, relative to workspace
+rc A A/1.in
+rp a < A/1.in             # normal redirection also works
+\end{lstlisting}
+\hint{Directories and source names are uppercase: \texttt{A/A.py} and
+\texttt{A/A.cpp}; either case is accepted in commands. Repeating \texttt{tmpl}
+keeps existing solutions. The optional input is a literal filename, not a
+sample number: \texttt{rp A 1} opens a file called \texttt{1}.
+With no filename, paste input; use Ctrl-D when the program expects EOF.}
+
+\subsection{Samples, debugging and submission}\label{setup:debug}
+\begin{lstlisting}[language=bash]
+rp A A/1.in > A/1.out
+diff -u A/1.ans A/1.out
+\end{lstlisting}
+\hint{Save sample input as \texttt{A/1.in} and expected output as
+\texttt{A/1.ans}. Standard output is your answer. \texttt{dbg(...)} writes
+standard error, so debugging stays visible when output goes to a file.
+\texttt{rp} enables it with \texttt{LOCAL=1}; \texttt{rc} with \texttt{-DLOCAL}.
+Submit \texttt{A/A.py} or \texttt{A/A.cpp}, selecting the matching judge language.}
+
+\subsection{Direct commands as a fallback}\label{setup:direct}
+\begin{lstlisting}[language=bash]
+python3 A/A.py < A/1.in
+g++ -std=c++17 -O2 -Wall -DLOCAL A/A.cpp -o A/A
+./A/A < A/1.in
+\end{lstlisting}
+\hint{These work without terminal functions. For a new terminal, enter the
+command block again from the workspace root, or source the practice setup.
+Before relying on the setup, run both templates on input \texttt{42}, test a
+saved sample and check debug output. A compile failure must stop C++ execution.}

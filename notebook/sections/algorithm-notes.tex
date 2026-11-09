@@ -1,0 +1,193 @@
+\section{Algorithm roadmap}
+Use these notes to choose a technique and check its assumptions.
+$n,m$ denote vertex/edge counts in graph bounds, or input lengths
+elsewhere. Running times count algorithmic operations; Python object
+costs, big integers and memory can change what is practical.
+
+\subsection{Search, arrays and greedy choices}\label{algo:search}
+\textbf{Binary search on the answer.} Find a monotone predicate first.
+For the first true integer in $[l,r)$, maintain that every value below
+$l$ is false and the answer is at most $r$. Check the endpoint cases
+and return the sentinel $r$ if no value in the interval works.
+Cost is $O(T\log(r-l+1))$ when one predicate evaluation costs $T$.
+For real answers, stop after a justified number of iterations or when
+the interval is below the required error; keep false/true endpoint roles.
+
+\textbf{Prefix and difference arrays.} Define $P[0]=0$,
+$P[i+1]=P[i]+a[i]$: sum of $[l,r)$ is $P[r]-P[l]$.
+To add $v$ to $[l,r)$ offline, do $D[l]{+}{=}v$,
+$D[r]{-}{=}v$, then prefix-sum $D$. Allocate the sentinel at $n$.
+For online updates and range queries, consider a Fenwick or segment tree.
+
+\textbf{Two pointers.} Linear time requires that each pointer only
+moves forward and that validity changes monotonically.
+A sum-bounded window works for nonnegative values; negative values
+break that argument. A monotone deque gives all fixed-window minima
+in $O(n)$; remove expired indices, not just expired values.
+
+\textbf{Coordinate compression.} Sort unique values and replace each
+by its rank: $O(n\log n)$. Order/equality are preserved; actual distances
+and gaps are not. Recover differences from the original coordinates.
+
+\textbf{Greedy.} Establish an exchange argument or invariant before
+committing. Maximum number of compatible intervals: increasing end
+time. Maximum \emph{weight} of compatible intervals needs DP.
+For a sweep, define tie order: touching half-open intervals do not
+overlap; touching closed intervals do. Try tiny counterexamples.
+
+\subsection{Dynamic programming}\label{algo:dp}
+Write down \textbf{state meaning, transition, base cases, evaluation order}.
+Time is roughly reachable states times choices per state; also count
+the cost of copying strings, masks or containers in each transition.
+For minimum cost, impossible states need infinity, not 0. For maximum
+with negative values, use negative infinity. For counting, use 0 and
+initialize the empty construction explicitly.
+
+\begin{tabularx}{\linewidth}{@{}XX@{}}
+\toprule
+Structure & Typical state / cost\\
+\midrule
+One sequence, best prefix & $dp[i]$; depends on transition\\
+Two sequences, LCS/edit distance & $dp[i][j]$; $O(nm)$\\
+Each item once, capacity $W$ & $dp[w]$; $O(nW)$\\
+Subsets of $n$ items & $dp[mask]$; exponential\\
+Interval split / merge & $dp[l][r]$; often $O(n^3)$\\
+Digits up to a bound & position, tight, started, property\\
+\bottomrule
+\end{tabularx}
+\textbf{Knapsack loop direction:} descending capacities for 0/1 items;
+ascending for unlimited copies. Counting coin combinations and ordered
+sequences uses different outer loops. LIS uses lower-bound insertion
+for strictly increasing, upper-bound insertion for nondecreasing.
+
+\textbf{Memoization.} Cache only complete states; include every changing
+constraint or clear the cache between cases. Recursive evaluation needs
+an acyclic dependency graph and manageable depth. Two-row DP saves
+memory when older rows are unused; reconstruction may need extra storage.
+
+\subsection{Graph selection and invariants}\label{algo:graphs}
+\begin{tabularx}{\linewidth}{@{}Xll@{}}
+\toprule
+Edge weights / task & Method & Time\\
+\midrule
+Every edge costs 1 & BFS & $O(n+m)$\\
+Weights only 0 or 1 & 0--1 BFS & $O(n+m)$\\
+Nonnegative weights & Dijkstra & $O((n+m)\log n)$\\
+Negative weights & Bellman--Ford & $O(nm)$\\
+Acyclic directed graph & Topological DP & $O(n+m)$\\
+All-pairs distances & Floyd--Warshall & $O(n^3)$\\
+Connectivity under merges & DSU & amort. $O(\alpha(n))$\\
+Minimum spanning tree & Kruskal & $O(m\log m)$\\
+\bottomrule
+\end{tabularx}
+\textbf{BFS:} mark visited on enqueue so each vertex enters the queue
+once. Multiple sources start at distance 0. In a grid, include all state
+that affects future moves: position alone may omit direction, keys or time.
+For 0--1 BFS, put a relaxed 0-cost edge at the deque front and a
+1-cost edge at its back.
+
+\textbf{Dijkstra:} skip a popped heap entry when its distance differs
+from the current best distance. Relax edges only on a strict improvement.
+Negative weights invalidate the settled-distance argument. Keep parent
+links if the path itself is needed.
+
+\textbf{Negative cycles:} Bellman--Ford's extra relaxation only proves
+a cycle relevant to a source when that edge is reachable from it.
+An answer is unbounded only if the cycle can also reach the target.
+Floyd--Warshall uses the intermediate vertex as its outermost loop.
+
+\textbf{Dependencies and components:} Kahn's topological sort removes
+zero-indegree vertices; fewer than $n$ removals means a directed cycle.
+SCC contraction produces a DAG. DSU handles undirected connectivity under
+additions; it does not answer directed reachability or ordinary deletions.
+$\alpha$ in its bound is the inverse Ackermann function. Kruskal on a
+disconnected graph gives a forest, not a spanning tree.
+
+\textbf{Euler walk:} degree conditions also need connectivity among
+vertices incident to edges (weak connectivity for a directed graph).
+Undirected: zero or two odd degrees. Directed: balanced indegree/outdegree,
+or one start with one extra outgoing edge and one end with one extra incoming.
+Track edge IDs when parallel edges exist.
+
+\textbf{Bipartite matching:} augmenting paths grow a matching one edge at
+a time. In a bipartite graph, minimum vertex-cover size equals maximum
+matching size; maximum independent-set size is $n$ minus that size.
+For shortest paths \emph{to} a target, reverse directed edges and run from
+the target. Minimum spanning trees solve total connection cost, not routes.
+
+\subsection{Trees and repeated transitions}\label{algo:trees}
+A connected undirected graph on $n$ vertices with $n-1$ edges is a tree.
+Root it iteratively; record parents and an order with parents before
+children. Reverse that order for subtree sizes and bottom-up DP.
+Every pair has a unique path: accumulate weights along that path; no
+shortest-path heap is needed just to compute root distances.
+
+\textbf{Euler intervals.} With entry time $tin[v]$ and exclusive exit
+$tout[v]$, the subtree is $[tin[v],tout[v])$. Define the traversal convention
+consistently; an entry/exit-event sequence has different indexing.
+
+\textbf{Binary lifting.} Store the $2^j$-th ancestor/successor for each
+vertex. Preprocessing $O(n\log K)$; a jump of up to $K$ steps costs
+$O(\log K)$. LCA by lifting depths, then lifting both vertices together
+costs $O(\log n)$ per query. Weighted distance is
+$d[a]+d[b]-2d[\operatorname{lca}(a,b)]$, where $d$ is root distance.
+
+\textbf{Rerooting.} Moving the root across an unweighted tree edge into
+a subtree of size $s$ changes the sum of distances by $n-2s$.
+That edge belongs to $s(n-s)$ unordered vertex-pair paths.
+Two farthest-vertex traversals find a diameter for unweighted trees,
+or weighted trees with nonnegative edge lengths; do not apply this
+shortcut to arbitrary graphs or negative edge lengths.
+
+\subsection{String techniques}\label{algo:strings}
+Start with Python string operations or C++ \texttt{find} for ordinary
+parsing and a small number of searches; account for copied slices.
+\textbf{Frequencies/parity:} two words are anagrams iff their frequency
+tables match. A multiset can form a palindrome iff at most one count is odd.
+\textbf{Rotations:} equal-length $a,b$ are rotations iff $b$ occurs in $a+a$.
+
+\textbf{KMP/prefix function:} $\pi[i]$ is the longest proper prefix that
+is also a suffix of $s[0..i]$. It gives linear pattern matching and periods.
+A candidate period $p=n-\pi[n-1]$ repeats the entire nonempty string iff
+$n\bmod p=0$. \textbf{Rolling hash:} collisions are possible; use a second
+hash or verify candidate matches when exact correctness matters.
+\textbf{Trie:} prefix queries cost the word length, but a Python dictionary
+per node can be memory-heavy. Sorting words and binary searching a prefix
+range can be simpler. State the allowed alphabet before constructing a
+sentinel such as \texttt{prefix + "\{"}.
+
+\subsection{Geometry decisions}\label{algo:geometry}
+Use orientation and squared distances for exact integer predicates.
+Handle collinear, coincident and endpoint cases deliberately.
+Choose whether boundary points count as inside before coding a polygon test.
+Sorting points by coordinates followed by a monotone-chain hull costs
+$O(n\log n)$; the cross-product comparison decides whether collinear hull
+boundary points are kept. Polygon vertices must be in boundary order for
+shoelace area. For farthest-pair questions, first restrict to hull vertices;
+a hull alone does not make an all-pairs scan linear.
+Avoid a floating-point tolerance inside an ordering comparator unless
+transitivity is preserved. Check every product and accumulated sum for
+C++ overflow; delay square roots and division where possible.
+
+\subsection{Finite impartial games}\label{algo:games}
+Under normal play, a state with no legal move loses. A state wins iff
+some move reaches a losing state. Evaluate states only after their successors;
+games with cycles may have draws and need more than this acyclic recurrence.
+For independent finite impartial games, define
+$g(s)=\operatorname{mex}\{g(t):s\to t\}$, where mex is the smallest
+nonnegative integer absent from the set. The combined position loses iff
+the xor of its Grundy values is 0. For Nim, each heap's Grundy value is its
+size. Mis\`ere play and interacting subgames need separate reasoning.
+
+\subsection{Testing and the last minute}\label{algo:testing}
+Compare a fast solution with a small, obviously correct brute force on
+many generated inputs. Save the random seed and failing input. Check both
+exit status and output; a crashing reference is not an agreement.
+Test empty/minimum cases when allowed, repeated values, all equal values,
+negative values, disconnected graphs, boundary coordinates and maximal depth.
+For floating output, compare with the specified absolute/relative tolerance.
+
+Before submission: correct file/language, required test-case loop, index base,
+integer width, output spelling, and no debug text on stdout.
+For interactive problems, flush each query and use the supplied interactor;
+ordinary sample redirection does not simulate an interactive judge.

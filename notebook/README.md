@@ -1,42 +1,49 @@
-# BAPC team notebook
+# Unified NWERC guide
 
-The team reference document (TRD) for BAPC 2026, written in LaTeX. It is
-landscape A4 with three columns, in C++ only. Every algorithm comes with a short
-"when to use it" box and tested code.
+Build and edit `notebook.tex`; print `notebook.pdf`. It starts at reference page
+1 after a cover. Content flows continuously across landscape A4 columns:
+index, local workspace setup, Python, C++17, mathematics, then algorithm notes.
+The index follows labels automatically. The PDF build rejects more than 25
+reference pages; the cover is separate.
 
-| Path | Contents |
+## Source map
+
+| Path | Purpose |
 | --- | --- |
-| `notebook.tex` | Layout, styling and chapter order. Put your university and team name at the top |
-| `sections/` | The text of each chapter |
-| `code/cpp/` | The code snippets that get printed, one file per snippet |
-| `code/sh/`, `code/py/` | The terminal setup, the stress test and the Python big-number example |
-| `tests/` | One `test_<chapter>.cpp` per chapter; checks every snippet against brute force |
+| `notebook.tex` | Shared layout and reading order |
+| `sections/index.tex` | Automatic topic/page index |
+| `sections/workspace.tex` | Setup guide, printed templates and commands |
+| `../tmpl/`, `../setup.sh` | Actual starter files and terminal functions |
+| `sections/python-language.tex` | Python syntax and standard-library APIs |
+| `sections/cpp-language.tex` | C++17 syntax and standard-library APIs |
+| `sections/math-basics.tex`, `python/` math sources | Formula lookup |
+| `sections/algorithm-notes.tex` | Technique selection and pitfalls |
+| `code/`, `tests/` | Preserved algorithm implementations and checks |
+| `legacy/` | Frozen BAPC PDFs and original main source |
 
-## Build and check
+Older algorithm chapters in `sections/` remain available for practice. They
+are not all printed in the current guide. The former `python/` supplement is
+superseded as a separate document; its mathematics sources are shared here.
+Do not concatenate old PDFs to make the NWERC print copy.
+
+## Build and validate
 
 ```sh
-./build.sh             # writes notebook.pdf (needs TeX Live: pdflatex + latexmk)
-./preview.sh graphs    # PDF of one chapter only, to check its layout
-./tests/run.sh         # compiles and tests all snippets (needs g++)
-./tests/run.sh graphs  # only tests/test_graphs.cpp
+bash notebook/build.sh             # TeX Live or MiKTeX with latexmk
+bash tests/setup.sh                # run from the repository root
+bash notebook/tests/run.sh         # original algorithm tests; GCC required
 ```
 
-Run the tests after every code change. A snippet only belongs in the notebook
-once its test passes.
+Build files and visual checks go in the ignored `.build/` directory. For an
+alternate PDF destination, pass it to `notebook/build.sh` (relative paths are
+resolved from `notebook/`). `python/build.sh` forwards to the unified build for
+compatibility. To preview an original algorithm chapter, use `preview.sh`.
 
-## Adding a snippet
+The printed setup reads the real templates and command block in `../setup.sh`.
+If that block moves, update its listing line range in `sections/workspace.tex`.
+Keep C++17 and Python 3.10-compatible examples, and check compilation and the
+rendered PDF after changes. Algorithm code has meaningful tests; language
+examples should stay short enough to scan quickly.
 
-1. Put the code in `code/cpp/name.cpp`. Keep lines to 68 characters or fewer,
-   or they wrap in the PDF.
-2. Print it from a chapter: `\topic{Name}{$O(n \log n)$}`, then `\use{one line:
-   when to use it}`, then `\code{name}`.
-3. Add a check to that chapter's `tests/test_<chapter>.cpp`: `#include` the
-   snippet and compare it with a slow, obviously correct version on random input.
-
-## Contest rules for the TRD (BAPC 2026)
-
-- At most 25 single-sided A4 pages.
-- University name top left, page number top right.
-- Readable from half a metre away.
-- Handwritten notes are allowed on the front of the pages.
-- Up to 3 copies, handed in at registration.
+Rules: [NWERC 2026](https://2026.nwerc.eu/rules). Python and mathematics source
+references are in `python/SOURCES.md`.

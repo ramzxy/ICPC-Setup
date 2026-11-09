@@ -1,0 +1,172 @@
+\section{Mathematics: everyday formulas}\label{math:basics}
+\subsection{Sums, ranges and averages}
+\hint{$n\ge0$ is an integer; $a$ is the first term, $d$ the step,
+$r$ the ratio. Empty sums are 0.}
+\[
+\begin{aligned}
+ \sum_{i=1}^{n}i&=\frac{n(n+1)}2,\\
+ \sum_{i=1}^{n}i^2&=\frac{n(n+1)(2n+1)}6,\\
+ \sum_{i=1}^{n}i^3&=\left(\frac{n(n+1)}2\right)^2,\\
+ \sum_{i=0}^{n-1}(a+id)&=na+\frac{dn(n-1)}2.
+\end{aligned}
+\]
+\[
+ \sum_{i=0}^{n-1}r^i=\frac{r^n-1}{r-1}\quad(r\ne1);
+ \qquad r=1:\ n.
+\]
+For $|r|<1$, $\sum_{i=0}^{\infty}r^i=1/(1-r)$.
+Modulo an integer, division requires an invertible denominator
+or an exact-division method; do not divide reduced residues normally.
+
+For integers $L\le R$ and $k>0$, multiples of $k$ in $[L,R]$:
+\[
+ \left\lfloor R/k\right\rfloor-
+ \left\lfloor(L-1)/k\right\rfloor.
+\]
+This also works for negative endpoints; use floor division.
+For real values $a_1,\ldots,a_n$, $n\ge1$, minimizing over real $x$:
+$\sum_i|a_i-x|$ is minimized by a median;
+$\sum_i(a_i-x)^2$ by the mean $x=\sum_i a_i/n$.
+
+\subsection{Counting choices}\label{math:counting}
+\hint{Objects are distinct unless stated. $n,k,s,u$ are nonnegative
+integers. $0!=1$; $\binom nk=n!/[k!(n-k)!]$ for $0\le k\le n$,
+and 0 outside that range or when the upper argument is negative.}
+\begin{tabularx}{\linewidth}{@{}Xl@{}}
+\toprule
+What is counted & Count\\
+\midrule
+Orders of $n$ objects & $n!$\\
+Choose $k$, order matters ($k\le n$) & $n!/(n-k)!$\\
+Choose $k$, order ignored & $\binom nk$\\
+Subsets of $n$ objects & $2^n$\\
+Length-$k$ words over $n$ symbols & $n^k$\\
+Paths: $a$ right, $b$ up & $\binom{a+b}{a}$\\
+Choose $k$ of $n\ge1$ types, repeats & $\binom{n+k-1}{k}$\\
+Circular orders, rotations identified ($n\ge1$) & $(n-1)!$\\
+\bottomrule
+\end{tabularx}
+The empty word has one realization, including for an empty alphabet:
+use $0^0=1$ in these counting formulas. Circular orders here distinguish
+reflections; necklaces with repeated colors need Burnside's lemma.
+
+\textbf{Repeated labels.} If type $i$ occurs $c_i\ge0$ times and
+$\sum_i c_i=n$, distinct orders number $n!/\prod_i c_i!$.
+
+\textbf{Stars and bars.} For $k\ge1$ labeled boxes and total $s$:
+\[
+\begin{aligned}
+ \#\{x_1+\cdots+x_k=s,\ x_i\ge0\}
+   &=\binom{s+k-1}{k-1},\\
+ \#\{x_1+\cdots+x_k=s,\ x_i\ge1\}
+   &=\binom{s-1}{k-1}\quad(s\ge k).
+\end{aligned}
+\]
+The second count is 0 for $s<k$. With $0\le x_i\le u$,
+\[
+ \sum_{j=0}^{k}(-1)^j\binom kj
+      \binom{s-j(u+1)+k-1}{k-1}.
+\]
+
+\subsection{Catalan, derangements and coverage}
+\textbf{Catalan $C_n$.} Balanced parentheses with $n$ pairs,
+full ordered binary trees with $n$ internal nodes, or triangulations
+of a convex $(n+2)$-gon ($n\ge1$):
+\[
+ C_n=\frac{1}{n+1}\binom{2n}{n}\quad(n\ge0).
+\]
+$C_0,C_1,\ldots=1,1,2,5,14,42,132,429,\ldots$.
+
+\textbf{Derangements $D_n$.} Permutations of $n$ labels with no label
+in its original position:
+\[
+ D_0=1,\quad D_1=0,\quad
+ D_n=(n-1)(D_{n-1}+D_{n-2})\quad(n\ge2).
+\]
+$D_0,D_1,\ldots=1,0,1,2,9,44,265,\ldots$.
+
+\textbf{Coupon collector.} Independent uniform draws from $n\ge1$
+types, with replacement: expected draws to see all types is
+$nH_n$, where $H_n=\sum_{i=1}^n1/i$.
+
+\subsection{Vectors, angles and distances}\label{math:geometry}
+\hint{Points/vectors are in the plane. Write $a=(a_x,a_y)$,
+$b=(b_x,b_y)$; $|a|$ is Euclidean length.}
+\[
+ a\cdot b=a_xb_x+a_yb_y,\qquad
+ a\times b=a_xb_y-a_yb_x.
+\]
+$a\times b>0$: $b$ is counterclockwise from $a$ through an angle
+less than $\pi$; zero means parallel. Orientation of three points
+$p,q,r$ is the sign of $(q-p)\times(r-p)$.
+$a\cdot b=0$ means perpendicular for nonzero vectors.
+\[
+ |p-q|^2=(p_x-q_x)^2+(p_y-q_y)^2.
+\]
+Compare squared distances when possible. Integer coordinates allow
+exact predicates; bound intermediate products and accumulated sums.
+Python integers are exact; C++ may need a wider intermediate type.
+
+For nonzero vectors, the unsigned angle between them is
+$\operatorname{atan2}(|a\times b|,a\cdot b)\in[0,\pi]$.
+Direction of $a\ne0$ is $\operatorname{atan2}(a_y,a_x)$.
+Convert degrees to radians by multiplying by $\pi/180$.
+Counterclockwise rotation through $\theta$ radians:
+\[
+ (x,y)\mapsto(x\cos\theta-y\sin\theta,
+              x\sin\theta+y\cos\theta).
+\]
+
+\textbf{Point $p$ to line/segment $ab$.} Require $a\ne b$;
+put $v=b-a$, $t=(p-a)\cdot v/(v\cdot v)$.
+For the line, projection is $q=a+tv$.
+For the segment, first clamp $t$ to $[0,1]$.
+Distance is $|p-q|$. If $a=b$, use $|p-a|$.
+
+\subsection{Polygon area and lattice points}
+\hint{$p_0,\ldots,p_{n-1}$ are vertices in boundary order,
+$p_n=p_0$; $A$ denotes nonnegative area.}
+\[
+ A_2=\sum_{i=0}^{n-1}p_i\times p_{i+1},\qquad A=|A_2|/2.
+\]
+For a simple polygon, $A_2>0$ means counterclockwise orientation.
+Triangle area is $|(b-a)\times(c-a)|/2$.
+A simple $n$-vertex polygon has interior-angle sum $(n-2)\pi$.
+
+\textbf{Pick's theorem.} For a simple polygon with integer vertices
+and no holes, let $I$ be its strictly interior lattice-point count and
+$B$ its boundary lattice-point count:
+\[
+ A=I+B/2-1,\qquad
+ B=\sum_{\text{edges}}\gcd(|\Delta x|,|\Delta y|).
+\]
+Thus $I=(|A_2|-B+2)/2$. The differences are between the endpoints
+of each edge; do not count shared vertices separately.
+
+\subsection{Triangles, circles and spheres}
+\hint{A nondegenerate triangle has side lengths $a,b,c>0$,
+opposite angles $\alpha,\beta,\gamma$, semiperimeter
+$s=(a+b+c)/2$ and area $A>0$.}
+\[
+\begin{aligned}
+ c^2&=a^2+b^2-2ab\cos\gamma,\\
+ A&=\sqrt{s(s-a)(s-b)(s-c)},\\
+ R&=abc/(4A),\qquad r=A/s,\\
+ a/\sin\alpha&=b/\sin\beta=c/\sin\gamma=2R.
+\end{aligned}
+\]
+$R$ is circumradius; $r$ is inradius. With $a\le b\le c$,
+existence requires $a+b>c$; the largest angle is right, acute or
+obtuse according as $a^2+b^2-c^2$ is zero, positive or negative.
+
+For a circle of radius $r\ge0$ and central angle $0\le\theta\le2\pi$
+in radians: circumference $2\pi r$, area $\pi r^2$, arc length $r\theta$,
+sector area $r^2\theta/2$, chord length $2r\sin(\theta/2)$.
+A sphere of radius $r$ has surface area $4\pi r^2$ and volume
+$4\pi r^3/3$.
+
+\hint{For floating-point geometry, choose tolerances for the input
+scale; one fixed epsilon is not universal. Clamp a cosine to
+$[-1,1]$ before \texttt{acos}, and a tiny negative roundoff to 0
+before \texttt{sqrt}. Never use an epsilon comparator for sorting
+unless it still defines a strict weak ordering.}

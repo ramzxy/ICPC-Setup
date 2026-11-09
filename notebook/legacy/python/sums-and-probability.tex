@@ -1,0 +1,186 @@
+\topicgroup{Sums and sequences}
+
+\formula{S1}{Weighted geometric sums}
+\symbols{$n\ge0$: integer upper limit; $i$: index;
+$r$: ratio, $r\ne1$.}
+\[
+ \sum_{i=1}^n ir^i
+ =\frac{r(1-(n+1)r^n+nr^{n+1})}{(1-r)^2}.
+\]
+At $r=1$: $n(n+1)/2$.
+For $|r|<1$: $\sum_{i\ge1}ir^i=r/(1-r)^2$.
+Modulo $m>0$: denominator must be invertible.
+
+\formula{S2}{Pair distances and products}
+\symbols{$a_1,\ldots,a_n$: real values; $i<j$: each pair once.
+First formula: sort $a_1\le\cdots\le a_n$.}
+\[
+ \sum_{i<j}|a_i-a_j|=\sum_{i=1}^n(2i-n-1)a_i.
+\]
+Without sorting:
+\[
+ \begin{aligned}
+ \sum_{i<j}(a_i-a_j)^2
+   &=n\sum_i a_i^2-\left(\sum_i a_i\right)^2,\\
+ \sum_{i<j}a_i a_j
+   &=\frac{(\sum_i a_i)^2-\sum_i a_i^2}{2}.
+ \end{aligned}
+\]
+Manhattan distances: apply the first formula per coordinate.
+
+\formula{S3}{Fibonacci doubling and sums}
+\symbols{$F_0=0$, $F_1=1$, $F_{n+2}=F_{n+1}+F_n$;
+$n,k\ge0$: integer indices.}
+\[
+ \begin{aligned}
+ F_{2k}&=F_k(2F_{k+1}-F_k),\\
+ F_{2k+1}&=F_k^2+F_{k+1}^2.
+ \end{aligned}
+\]
+$\sum_{i=0}^nF_i=F_{n+2}-1$;
+$\sum_{i=0}^nF_i^2=F_nF_{n+1}$.
+$\gcd(F_a,F_b)=F_{\gcd(a,b)}$ for integer $a,b\ge1$.
+Doubling takes $O(\log n)$ arithmetic steps. Modulo $m$:
+all identities work except the gcd identity.
+
+\formula{S4}{Convolution and recurrences}
+\symbols{$A(x)=\sum_{n\ge0}a_nx^n$, $B(x)=\sum_{n\ge0}b_nx^n$;
+$[x^n]$: coefficient of $x^n$; $x$: formal variable.}
+\[
+ [x^n](AB)=\sum_{i=0}^n a_i b_{n-i}.
+\]
+For constants $c,d$ and $a_n=ca_{n-1}+da_{n-2}$, $n\ge2$:
+\[
+ A(x)=\frac{a_0+(a_1-ca_0)x}{1-cx-dx^2}.
+\]
+Formal series: no convergence requirement.
+
+\topicgroup{Binomials and modular counting}
+\symbols{$\binom nr$: choose $r$ of $n$ objects; parameters and
+indices are integers. Upper arguments are nonnegative;
+$\binom nr=0$ outside $0\le r\le n$.}
+
+\formula{B1}{Binomial sums}
+For nonnegative integer parameters:
+\[
+ \begin{aligned}
+ \textstyle\sum_{i=0}^n\tbinom ik&=\tbinom{n+1}{k+1},\\
+ \textstyle\sum_k\tbinom ak\tbinom b{r-k}&=\tbinom{a+b}r,\\
+ \textstyle\sum_{k=0}^n\tbinom nk^2&=\tbinom{2n}n,\\
+ \textstyle\sum_{k=0}^n k\tbinom nk&=n\,2^{n-1}\quad(n\ge1),\\
+ \textstyle\sum_{k=0}^n(-1)^k\tbinom nk&=0\quad(n\ge1).
+ \end{aligned}
+\]
+
+\formula{B2}{Prime factors and trailing zeros}
+\symbols{$p$: prime; $v_p(N)$: exponent of $p$ in integer $N>0$;
+$0\le r\le n$ (Legendre).}
+\[
+ \begin{aligned}
+ v_p(n!)&=\textstyle\sum_{j\ge1}\lfloor n/p^j\rfloor,\\
+ v_p\tbinom nr&=v_p(n!)-v_p(r!)-v_p((n-r)!).
+ \end{aligned}
+\]
+Base $b=\prod_i p_i^{e_i}>1$, with distinct primes $p_i$:
+\[
+\text{Trailing zeros of }n!
+ =\min_i\left\lfloor v_{p_i}(n!)/e_i\right\rfloor.
+\]
+
+\formula{B3}{Binomial mod a prime (Lucas)}
+\symbols{$p$: prime modulus; $n_i,r_i$: base-$p$ digits,
+$n=\sum_i n_ip^i$, $r=\sum_i r_ip^i$, $0\le n_i,r_i<p$.}
+\[
+ \tbinom nr\equiv\prod_i\tbinom{n_i}{r_i}\pmod p.
+\]
+Any $r_i>n_i$ gives 0. Factorial inverses require
+indices $<p$; $p!$ has no inverse modulo $p$.
+
+\formula{B4}{Binomial mod a prime power}
+\symbols{$p$: prime; $k\ge1$; $0\le r\le n$;
+$e=v_p\binom nr$; $U(t)=t!/p^{v_p(t!)}$.}
+If $e\ge k$, answer 0. Otherwise:
+\[
+ \tbinom nr\equiv
+ p^e U(n)U(r)^{-1}U(n-r)^{-1}\pmod{p^k}.
+\]
+Strip $p$ factors before reducing/inverting $U$ modulo $p^k$.
+Combine prime powers by CRT.
+
+\formula{B5}{Exact modular division}
+\symbols{$A$: integer numerator; $d>0$: divisor with $d\mid A$;
+$m>0$: modulus; $A\bmod(dm)\in[0,dm)$.}
+\[
+ (A/d)\bmod m=\frac{A\bmod(dm)}d.
+\]
+Integer-divide the residue by $d$; no inverse needed.
+
+\topicgroup{Probability and expectation}
+\symbols{$X,Y,X_i$: random variables; $P$: probability;
+$E$: expectation; $\operatorname{Var}$: variance;
+$\operatorname{Cov}$: covariance. All required moments finite.}
+
+\formula{P1}{Expectation and variance}
+\symbols{$a,b$: constants; $I\in\{0,1\}$: event indicator,
+$P(I=1)=p$.}
+$E[\sum_iX_i]=\sum_iE[X_i]$, without independence.
+\[
+ \begin{aligned}
+ \operatorname{Var}(X)&=E[X^2]-E[X]^2,\\
+ \operatorname{Cov}(X,Y)&=E[XY]-E[X]E[Y].
+ \end{aligned}
+\]
+\[
+ \operatorname{Var}\left(\textstyle\sum_i X_i\right)
+ =\textstyle\sum_i\operatorname{Var}(X_i)+2\sum_{i<j}\operatorname{Cov}(X_i,X_j).
+\]
+$\operatorname{Var}(aX+b)=a^2\operatorname{Var}(X)$.
+Independence gives covariance 0.
+$E[I]=p$, $\operatorname{Var}(I)=p(1-p)$.
+
+\formula{P2}{Tail sums and extrema}
+For nonnegative integer-valued $X$:
+\[
+ \begin{aligned}
+ E[X]&=\textstyle\sum_{k\ge1}P(X\ge k),\\
+ E[X^2]&=\textstyle\sum_{k\ge1}(2k-1)P(X\ge k).
+ \end{aligned}
+\]
+For independent $X_i$, real threshold $t$:
+\[
+ \begin{aligned}
+ P(\max_i X_i\le t)&=\textstyle\prod_iP(X_i\le t),\\
+ P(\min_i X_i>t)&=\textstyle\prod_iP(X_i>t).
+ \end{aligned}
+\]
+
+\formula{P3}{Independent trials: binomial}
+\symbols{$n$ independent trials, success probability $p\in[0,1]$;
+$X$: success count; $k$: outcome, $0\le k\le n$.}
+\[
+ P(X=k)=\binom nk p^k(1-p)^{n-k}.
+\]
+$E[X]=np$; $\operatorname{Var}(X)=np(1-p)$.
+
+\formula{P4}{First success: geometric}
+\symbols{Independent trials, success probability $p\in(0,1]$;
+$X$: trials through first success; $k$: outcome, $k\ge1$.}
+\[
+ P(X=k)=(1-p)^{k-1}p.
+\]
+$E[X]=1/p$; $\operatorname{Var}(X)=(1-p)/p^2$.
+
+\formula{P5}{No replacement: hypergeometric}
+\symbols{$N>1$ objects, $0\le K\le N$ marked;
+$0\le n\le N$ uniform draws without replacement;
+$X$: marked count; $k$: outcome; $p=K/N$.}
+\[
+ P(X=k)=\frac{\binom Kk\binom{N-K}{n-k}}{\binom Nn}.
+\]
+$E[X]=np$; $\operatorname{Var}(X)=np(1-p)(N-n)/(N-1)$.
+
+\formula{P6}{Probability bounds}
+\symbols{$t>0$: threshold; $A_i$: events.}
+Markov ($X\ge0$): $P(X\ge t)\le E[X]/t$.
+Chebyshev: $P(|X-E[X]|\ge t)\le\operatorname{Var}(X)/t^2$.
+Union: $P(\bigcup_i A_i)\le\sum_iP(A_i)$; no independence needed.

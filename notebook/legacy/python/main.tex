@@ -1,0 +1,520 @@
+% One unnumbered front sheet, then pages 21--25: Python APIs and mathematics.
+% Keep ../notebook.tex and the original printed pages unchanged.
+% Edit this five-page supplement independently of the printed original.
+% APIs: docs.python.org/3.10/library/{stdtypes,math,fractions,decimal,
+%       collections,itertools,functools,heapq,bisect,datetime,graphlib}.html
+\documentclass[9pt]{extarticle}
+\usepackage[a4paper, landscape, left=7mm, right=7mm, top=14mm, bottom=7mm,
+            headsep=3mm, headheight=12pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scaled=0.92]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[varqu, varl]{inconsolata}
+\usepackage{amsmath, amssymb}
+\usepackage{xcolor, listings, multicol, fancyhdr, enumitem, booktabs, tabularx, array}
+\usepackage[explicit]{titlesec}
+\usepackage{needspace}
+\usepackage{refcount}
+\usepackage{microtype}
+\DisableLigatures[<,>]{encoding=T1, family=tt*}
+
+% Match the main notebook's typography, margins, columns and headings.
+\newcommand{\university}{University of Twente}
+\newcommand{\teamname}{Nth time's the charm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{\university}\enspace|\enspace\teamname}
+\newcommand{\supplementtitle}{Python and mathematics | Index: 21}
+\fancyhead[C]{\supplementtitle}
+\fancyhead[R]{\textbf{\large\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\columnsep}{4mm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlist{nosep, leftmargin=1em, label=\textbullet}
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0pt}{\thesection\quad #1}[{\titlerule[1pt]}]
+\titlespacing*{\section}{0pt}{5pt}{2pt}
+\titleformat{\subsection}{\normalfont\bfseries}{}{0pt}
+  {\colorbox{black!15}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut\thesubsection\quad #1}}}
+\titlespacing*{\subsection}{0pt}{3pt}{1pt}
+% Keep a heading with the beginning of its example when columns reflow.
+\let\referenceSubsection\subsection
+\renewcommand{\subsection}{\needspace{4\baselineskip}\referenceSubsection}
+\lstdefinestyle{python}{
+  language=Python,
+  morekeywords={True,False,None,as,with,nonlocal},
+  basicstyle=\ttfamily\fontsize{7.4}{8.3}\selectfont,
+  keywordstyle=\bfseries,
+  commentstyle=\color{black!60},
+  stringstyle=\color{black!80},
+  columns=fullflexible, keepspaces=true,
+  breaklines=true, postbreak=\mbox{\normalsize$\hookrightarrow$\space},
+  tabsize=4, showstringspaces=false, upquote=true,
+  frame=leftline, framerule=1pt, rulecolor=\color{black!40},
+  framesep=3pt, xleftmargin=4pt,
+  aboveskip=2pt, belowskip=2pt,
+}
+\lstset{style=python}
+\newcommand{\hint}[1]{{\small #1\par}}
+% Compact lookup style, applied only to the setup / mathematics pages.
+\newcommand{\sheetstyle}{%
+  \fontsize{9}{10}\selectfont
+  \setlength{\parskip}{1pt}%
+  \setlength{\multicolsep}{3pt}%
+  \setlength{\abovedisplayskip}{3pt}%
+  \setlength{\belowdisplayskip}{3pt}%
+  \setlength{\abovedisplayshortskip}{1pt}%
+  \setlength{\belowdisplayshortskip}{2pt}%
+  \setlength{\jot}{1pt}}
+\newcommand{\topicgroup}[1]{%
+  \par\addvspace{5pt}\needspace{6\baselineskip}\noindent
+  \colorbox{black!15}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+    \fontsize{9.5}{10.5}\selectfont\bfseries #1}}\par\nobreak\vspace{1pt}}
+\newcommand{\formula}[2]{%
+  \par\addvspace{3pt}\needspace{3\baselineskip}%
+  {\bfseries #1\enspace #2\label{formula:#1}}\par\nobreak}
+\newcommand{\symbols}[1]{\par\nobreak{\small\textit{Symbols:} #1\par}}
+\newcommand{\lookup}[2]{#1\hfill\textbf{#2}\par}
+\newcommand{\indexpages}[2]{%
+  \ifnum\getpagerefnumber{#1}=\getpagerefnumber{#2}\relax
+    \pageref{#1}%
+  \else\pageref{#1}--\pageref{#2}\fi}
+% The front sheet is separate from the five reference pages 21--25.
+\newif\ifreferencecontent
+\newcount\referencepages
+\AddToHook{shipout/before}{%
+  \ifreferencecontent
+    \global\advance\referencepages by 1
+    \ifnum\referencepages>5\relax
+      \PackageError{python-reference}{Supplement exceeds five pages}
+        {Only pages 21--25 may be appended after the front sheet.}\fi
+  \fi}
+
+\begin{document}
+% Print this front sheet three times, once for each already printed notebook.
+\newgeometry{margin=20mm}
+\thispagestyle{empty}
+\null\vfill
+\begin{center}
+  {\fontsize{30}{36}\selectfont\bfseries\university\par}
+  \vspace{12mm}
+  {\fontsize{26}{32}\selectfont\teamname\par}
+\end{center}
+\vfill\null
+\clearpage
+\restoregeometry
+\referencecontenttrue
+\setcounter{page}{21}
+\input{index}
+\begin{multicols*}{3}
+\raggedcolumns
+\raggedright
+
+\begingroup\sheetstyle
+\input{python-setup}
+\par\endgroup
+
+\section{Essentials}
+Standard library only. Run: \texttt{python3 sol.py < 1.in}.
+
+\subsection{Input and output}
+\begin{lstlisting}[label=py:io]
+import sys
+input = sys.stdin.readline
+n = int(input())
+a = list(map(int, input().split()))
+print(sum(a))
+print(*a)                         # space-separated
+\end{lstlisting}
+\hint{Whole-file integer input (not for interactive problems):}
+\begin{lstlisting}[label=py:tokens]
+import sys
+it = iter(map(int, sys.stdin.buffer.read().split()))
+n = next(it)
+a = [next(it) for _ in range(n)]
+\end{lstlisting}
+\hint{\texttt{buffer} gives bytes; use \texttt{token.decode()} for text.
+Interactive: \texttt{print("?", x, flush=True)}.}
+
+\subsection{Arithmetic and comparisons}
+\begin{lstlisting}[label=py:arithmetic]
+7 / 3                  # float: 2.333...
+-7 // 3, -7 % 3        # (-3, 2): division floors
+a, b = -7, 3           # b > 0
+ceil_div = -(-a // b)  # -2, works for either sign of a
+2 ** 10                # 1024; ^ is XOR, not power
+10 ** 18               # exact int; 1e18 is a float
+x, y = 3, 8; x, y = y, x  # swap; unpack a tuple
+0 <= x < 10            # chained comparison
+x == y                 # value equality; "is": identity
+\end{lstlisting}
+
+\subsection{Lists, slices and grids}
+\begin{lstlisting}[label=py:lists]
+a = [10, 20, 30, 40]
+a.append(50); a.extend([60, 70])
+last = a.pop()                    # removes last
+a[-1], a[1:3], a[::-1]           # 60, [20,30], reversed
+b = a.copy()                     # shallow copy
+a[1:3] = [9]                     # replace a slice
+n, m = 3, 4
+grid = [[0] * m for _ in range(n)]
+squares = [x*x for x in range(6) if x % 2 == 0]
+\end{lstlisting}
+\hint{\texttt{a=b} aliases; \texttt{[[0]*m]*n} repeats the same row.
+Slices copy and exclude the stop index.}
+
+\subsection{Loops and built-ins}
+\begin{lstlisting}[label=py:builtins]
+a = [3, 1, 4]
+list(range(2, 8, 2))              # [2, 4, 6]
+list(enumerate(a))                # [(0,3),(1,1),(2,4)]
+list(zip(a, [10, 20]))            # stops at shorter input
+len(a), sum(a), min(a), max(a)    # 3, 8, 1, 4
+any(x < 0 for x in a)             # False
+all(x > 0 for x in a)             # True
+list(reversed(a))                # [4, 1, 3]
+\end{lstlisting}
+\hint{\texttt{map/zip/reversed} are one-pass iterators;
+\texttt{list(...)} stores their results.}
+
+\section{Exact numbers}
+
+\subsection{Huge integers and modular arithmetic}
+\begin{lstlisting}[label=py:integers]
+a = 10 ** 100                     # arbitrary-size int
+q, r = divmod(a, 97)              # a == q*97 + r
+int("ff", 16), int("101", 2)      # 255, 5
+bin(13), hex(255)                 # '0b1101', '0xff'
+pow(2, 1000, 97)                  # 2**1000 mod 97
+pow(3, -1, 10)                    # 7: inverse, gcd=1
+abs(-123), len(str(a))            # 123, 101 digits
+\end{lstlisting}
+\hint{\texttt{pow(a,e,m)} avoids building \texttt{a**e}.
+Inverses need coprime \texttt{a,m}; \texttt{m} need not be prime.}
+
+\subsection{Integer math and counting}
+\begin{lstlisting}[label=py:math]
+from math import gcd, lcm, isqrt, comb, perm, factorial
+gcd(12, 18, 30), lcm(4, 6, 10)    # 6, 60
+isqrt(10 ** 100 + 1)              # 10**50, exact floor
+comb(100, 50)                     # exact n choose k
+perm(5, 2), factorial(5)          # 20, 120
+from math import inf, pi, hypot, atan2, floor, ceil
+hypot(3, 4), atan2(1, 0)          # 5.0, pi/2 radians
+\end{lstlisting}
+\hint{\texttt{comb/factorial} give full integers, not values modulo
+\texttt{MOD}. Use \texttt{isqrt}, not float \texttt{sqrt}, for exact roots.}
+
+\subsection{Exact fractions}
+\begin{lstlisting}[label=py:fractions]
+from fractions import Fraction as F
+x = F(1, 3) + F(1, 6)            # Fraction(1, 2)
+x.numerator, x.denominator       # (1, 2)
+F("0.125")                       # 1/8, exact decimal
+F(2, 3) < F(3, 4)                # exact comparison
+F("3.14159").limit_denominator(100)  # 311/99
+\end{lstlisting}
+\hint{Fractions reduce automatically. Use integers or strings:
+\texttt{F(0.1)} preserves a binary float, not exactly \texttt{1/10}.}
+
+\subsection{High-precision decimal arithmetic}
+\begin{lstlisting}[label=py:decimal]
+from decimal import Decimal as D, localcontext
+with localcontext() as ctx:
+    ctx.prec = 60                 # significant digits
+    x = D(1) / D(7)              # rounded to precision
+    root = D(2).sqrt()
+    y = D("0.1") + D("0.2")      # exactly 0.3
+    z = D("1.235").quantize(D("0.01"))  # 1.24
+\end{lstlisting}
+\hint{Use strings for decimal input. Context controls precision and
+rounding. For exact \texttt{1/3}, use \texttt{Fraction}.}
+
+\subsection{Integer bitmasks}
+\begin{lstlisting}[label=py:bits]
+mask, i, n = 0b10110, 1, 6
+mask.bit_count(), mask.bit_length()  # 3, 5
+bool(mask & (1 << i))             # test bit i
+mask |= 1 << 5                    # set bit 5
+mask &= ~(1 << 1)                 # clear bit 1
+mask ^= 1 << 2                    # toggle bit 2
+mask << 3, mask >> 1              # unlimited-width shifts
+(~mask) & ((1 << n) - 1)          # complement in n bits
+\end{lstlisting}
+
+\section{Containers}
+
+\subsection{Dictionaries and composite keys}
+\begin{lstlisting}[label=py:dict]
+d = {"a": 2}
+d["b"] = 3
+d.get("missing", 0)               # 0; does not insert
+"a" in d                         # membership tests keys
+list(d.items())                  # [('a',2),('b',3)]
+list(d.keys()), list(d.values())
+d.pop("missing", None)            # default avoids KeyError
+positions = {(2, 3): 7}          # tuple key, built-in hash
+frozen = frozenset([1, 2, 2])     # hashable set: {1,2}
+\end{lstlisting}
+\hint{Dict iteration preserves insertion order. Keys must be hashable:
+use tuples/frozensets, not lists/sets. Missing \texttt{d[k]} raises
+\texttt{KeyError}.}
+
+\subsection{Sets}
+\begin{lstlisting}[label=py:sets]
+s, t = {1, 2, 3}, {3, 4}
+s | t, s & t                     # union, intersection
+s - t, s ^ t                     # difference, symmetric diff
+s <= t, s.isdisjoint(t)           # subset, no overlap
+s.add(5); s.discard(99)           # discard tolerates missing
+empty = set()                    # {} is an empty dict
+unique = set([3, 1, 3])
+\end{lstlisting}
+\hint{Sets have no sorted-order guarantee.
+Set/dict membership is average $O(1)$; list membership is $O(n)$.}
+
+\subsection{Frequency tables and multisets}
+\begin{lstlisting}[label=py:counter]
+from collections import Counter
+c = Counter("banana")            # a:3, n:2, b:1
+c["x"]                          # 0; does not insert
+c.most_common(2)                 # [('a',3), ('n',2)]
+list(c.elements())               # repeat by multiplicity
+c + Counter("an"), c - Counter("an")
+c & Counter("band"), c | Counter("band")
+# &: minimum counts; |: maximum; +/-: add/subtract
+\end{lstlisting}
+\hint{Counter arithmetic drops nonpositive counts.
+\texttt{c.subtract(other)} mutates and keeps zero/negative counts.}
+
+\subsection{Grouping with missing defaults}
+\begin{lstlisting}[label=py:defaultdict]
+from collections import defaultdict
+groups = defaultdict(list)
+groups["a"].append(4)             # creates [] if missing
+counts = defaultdict(int)
+counts["a"] += 1                 # creates 0 if missing
+sets = defaultdict(set)
+sets["a"].add(4)
+\end{lstlisting}
+
+\subsection{Deque: queue and both ends}
+\begin{lstlisting}[label=py:deque]
+from collections import deque
+q = deque([1, 2])                 # O(1) ends; list.pop(0): O(n)
+q.append(3); q.appendleft(0)
+q.popleft(), q.pop()              # 0, 3
+q.rotate(1)                      # [2,1]: right by 1
+q[0], q[-1]                      # 2, 1
+\end{lstlisting}
+
+
+
+\section{Strings and order}
+
+\subsection{Strings}
+\begin{lstlisting}[label=py:strings]
+s = "  one  two\n"
+s.strip(), s.split()              # 'one  two', ['one','two']
+"a,,b,".split(",")                # ['a','','b','']
+"-".join(["a", "b", "c"])         # 'a-b-c'
+s.replace("one", "1")             # replace all occurrences
+"banana".find("na")               # 2; -1 if absent
+"banana".count("an")              # 2, non-overlapping
+"abc".startswith("ab"), "abc".endswith("c")
+"abc"[::-1], "AbC".lower()        # 'cba', 'abc'
+ord("a"), chr(97)                 # 97, 'a'
+\end{lstlisting}
+\hint{Strings are immutable. Build many output fragments in a list,
+then join; repeated concatenation can be quadratic.
+\texttt{split()} collapses whitespace; \texttt{split(",")} keeps
+empty fields.}
+
+\subsection{Formatting and conversions}
+\begin{lstlisting}[label=py:format]
+x = 1 / 3
+f"{x:.10f}"                      # '0.3333333333'
+f"{7:03d}", f"{255:x}"           # '007', 'ff'
+f"{13:08b}"                      # '00001101'
+"  abc  ".strip()                # 'abc'
+int("-42"), float("1.25")        # -42, 1.25
+str(123), list("abc")             # '123', ['a','b','c']
+\end{lstlisting}
+
+\subsection{Sorting and key functions}
+\begin{lstlisting}[label=py:sorting]
+a = [(2, 5), (1, 7), (2, 3)]
+b = sorted(a)                    # lexicographic tuples
+a.sort(key=lambda p: (p[0], -p[1]))
+sorted(["bbb", "a", "cc"], key=len)
+sorted([3, 1, 2], reverse=True)   # [3,2,1]
+max(a, key=lambda p: p[1])        # item with largest second
+min([], default=0)               # 0 instead of ValueError
+\end{lstlisting}
+\hint{Sorts are stable; equal keys keep their original order.
+\texttt{a.sort()} mutates and returns \texttt{None};
+\texttt{sorted(a)} makes a new list.}
+
+\subsection{Binary search in a sorted list}
+\begin{lstlisting}[label=py:bisect]
+from bisect import bisect_left as bl, bisect_right as br
+from bisect import insort
+a, x = [1, 2, 2, 5], 2
+bl(a, x), br(a, x)                # 1, 3
+count = br(a, x) - bl(a, x)       # 2 occurrences
+insort(a, 3)                     # [1,2,2,3,5]
+\end{lstlisting}
+\hint{Search: $O(\log n)$. Insertion: $O(n)$.
+This is not a balanced ordered set.}
+
+\subsection{Extracting structured text}
+\begin{lstlisting}[label=py:regex]
+import re
+re.findall(r"-?\d+", "x=-12, y=34")  # ['-12','34']
+re.fullmatch(r"[A-Z]+\d+", "AB12") is not None
+re.split(r"[,;]+", "a,b;;c")      # ['a','b','c']
+\end{lstlisting}
+
+\section{Iteration and helpers}
+
+\subsection{Combinatorial iterators}
+\begin{lstlisting}[label=py:itertools]
+from itertools import (combinations, permutations, product,
+    combinations_with_replacement, accumulate, chain, pairwise)
+list(combinations("ABC", 2))     # AB, AC, BC (as tuples)
+list(permutations("ABC", 2))     # AB, AC, BA, BC, CA, CB
+list(product([0, 1], repeat=3))  # 000, 001, ..., 111
+list(product("AB", [1, 2]))      # A1, A2, B1, B2
+list(combinations_with_replacement("AB", 2))  # AA, AB, BB
+list(accumulate([2, 3, 4], initial=0))  # [0,2,5,9]
+list(chain.from_iterable([[1, 2], [3]]))  # [1,2,3]
+list(pairwise([4, 7, 9]))        # [(4,7),(7,9)]
+\end{lstlisting}
+\hint{These return lazy iterators; \texttt{list(...)} above shows
+the results. Iterate directly to avoid storing all outputs.
+Repeated input values can give duplicate permutations.}
+
+\subsection{Automatic memoization}
+\begin{lstlisting}[label=py:cache]
+from functools import cache
+
+@cache
+def f(i, mask):
+    ...                          # translate the recurrence
+
+f.cache_clear()                  # between different test cases
+# Older Python: @lru_cache(None), from functools import lru_cache
+\end{lstlisting}
+\hint{Arguments must be hashable (e.g.\ ints, tuples, frozensets).
+Cache keys include arguments, not changing global variables.
+Clear between cases or make a new function. Recursion depth still
+applies; iterative traversal is safer for deep graphs.}
+
+\subsection{Min-heaps and sorted merging}
+\begin{lstlisting}[label=py:heap]
+from heapq import (heapify, heappush, heappop, heappushpop,
+                  heapreplace, nsmallest, nlargest, merge)
+h = [5, 2, 8]
+heapify(h)                       # O(n); minimum at h[0]
+heappush(h, 3)
+heappop(h)                       # 2; O(log n)
+heappushpop(h, 4)                # push, then pop minimum
+heapreplace(h, 6)                # pop minimum, then push
+nlargest(2, [4, 1, 7]), nsmallest(2, [4, 1, 7])
+list(merge([1, 4], [2, 3]))      # [1,2,3,4]; inputs sorted
+\end{lstlisting}
+\hint{Min-heap: use \texttt{(-priority, item)} for a max-heap.
+Tuples compare lexicographically; add a unique counter before
+non-comparable payloads. \texttt{heapreplace} needs a nonempty
+heap. Merging is lazy.}
+
+\subsection{Comprehensions and generators}
+\begin{lstlisting}[label=py:comprehensions]
+a = [3, 1, 3]
+index = {x: i for i, x in enumerate(a)}  # last index of x
+pairs = {(x, y) for x in range(2) for y in range(3)}
+total = sum(x*x for x in a)      # generator: no extra list
+first, *middle, last = [1, 2, 3, 4]
+\end{lstlisting}
+\hint{Use brackets for a list, braces for a set/dict,
+\texttt{(expr for ...)} for a generator.}
+
+\section{Dates and reminders}
+
+\subsection{Calendar arithmetic}
+\begin{lstlisting}[label=py:dates]
+from datetime import date, timedelta
+a, b = date(2024, 2, 28), date(2024, 3, 1)
+(b - a).days                     # 2 (leap year)
+a + timedelta(days=2)            # 2024-03-01
+a.weekday()                      # 2: Monday=0, Sunday=6
+a.isoformat()                    # '2024-02-28'
+date.fromisoformat("2024-03-01")  # date(2024,3,1)
+from calendar import isleap, monthrange
+isleap(2024), monthrange(2024, 2)[1]  # True, 29 days
+\end{lstlisting}
+\hint{\texttt{date} supports years 1--9999.
+\texttt{monthrange(y,m)} returns (weekday of day 1, days in month).}
+
+\subsection{Topological order}
+\begin{lstlisting}[label=py:topological]
+from graphlib import TopologicalSorter, CycleError
+pred = {"A": set(), "B": {"A"}, "C": {"A", "B"}}
+order = list(TopologicalSorter(pred).static_order())
+# ['A','B','C']; CycleError if the graph has a cycle
+\end{lstlisting}
+\hint{Input lists \textbf{predecessors}, not outgoing neighbours.
+With several valid orders, the returned order need not be
+lexicographically smallest.}
+
+\subsection{JSON input}
+\begin{lstlisting}[label=py:json]
+import json
+obj = json.loads('{"a": [1, 2], "ok": true}')
+obj["a"][0], obj["ok"]           # 1, True
+json.dumps(obj)                  # encode back to JSON
+\end{lstlisting}
+
+\subsection{C++ to Python: avoid surprises}
+\begin{itemize}
+\item Indentation defines blocks; use 4 spaces.
+\item \texttt{and/or/not}, \texttt{True/False/None}; no \texttt{++}.
+\item \texttt{append/sort/reverse} mutate and return \texttt{None}.
+\item \texttt{==} compares values; \texttt{is} tests identity.
+      Use \texttt{x is None} for a missing value.
+\item \texttt{(x,)} is a one-element tuple; \texttt{(x)} is just \texttt{x}.
+\item Iterating a dict gives keys. Do not change a dict/set's size
+      while iterating it.
+\item Integers do not overflow; floats still round.
+\end{itemize}
+
+\subsection{Complexities to remember}\label{py:complexities}
+\small
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+\toprule
+Operation & Cost\\
+\midrule
+List index / last append or pop & $O(1)$ amort.\\
+List search / front or middle insert & $O(n)$\\
+Dict/set lookup, add, remove & $O(1)$ avg.\\
+Deque append/pop at either end & $O(1)$\\
+Heap push/pop & $O(\log n)$\\
+Sort & $O(n\log n)$\\
+List/string slice of length $k$ & $O(k)$\\
+\bottomrule
+\end{tabularx}
+\normalsize
+\hint{Bounds above treat numbers/keys as fixed-size.
+Big integer arithmetic and hashing long keys depend on their size.}
+
+\par
+\begingroup\sheetstyle
+\input{setup-and-number-theory}
+\input{graphs-and-counting}
+\input{sums-and-probability}
+\par\endgroup
+\end{multicols*}
+\end{document}
