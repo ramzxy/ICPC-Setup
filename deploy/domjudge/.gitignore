@@ -1,0 +1,5 @@
+secrets.env
+judgehost.env
+*.sql
+*.sql.gz
+.rendered.yaml

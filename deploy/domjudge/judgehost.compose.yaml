@@ -1,0 +1,17 @@
+# Run on a dedicated Linux judge VM, not on a shared k3s/control-plane node.
+services:
+  judgehost:
+    image: docker.io/domjudge/judgehost:9.0.1
+    platform: linux/amd64
+    hostname: judgehost-practice-1
+    restart: unless-stopped
+    privileged: true
+    cgroup: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+    environment:
+      CONTAINER_TIMEZONE: Europe/Amsterdam
+      DOMSERVER_BASEURL: ${DOMSERVER_BASEURL:?Set the judge-reachable DOMserver URL}
+      JUDGEDAEMON_USERNAME: ${JUDGEDAEMON_USERNAME:-judgehost}
+      JUDGEDAEMON_PASSWORD: ${JUDGEDAEMON_PASSWORD:?Set the judgehost account password}
+      DAEMON_ID: ${DAEMON_ID:-1}

@@ -5,54 +5,87 @@ C++17 is the fallback when its performance or containers help.
 
 ## Start a practice workspace
 
-In Bash (or zsh), from this repository:
+In Bash, from this repository:
 
 ```sh
-mkdir -p ../contest
 source ./setup.sh ../contest
 cd ../contest
-tmpl M                  # A/ through M/, both A.py and A.cpp, etc.
-rp A                    # Python, normal terminal input
-rp A A/1.in             # Python with a saved input file
-rc A A/1.in             # compile and run C++ with that input
+tmpl                    # A/ through N/, both templates in every folder
+rp A                    # Python, terminal input
+rp A 1                  # Python with A/1.in
+rc A 1                  # compile and run C++ with A/1.in
+tp A                    # check Python against all A/*.in + A/*.out
+tc A                    # compile once and check all C++ samples
 ```
 
-`tmpl` defaults to Z if its last letter is omitted. Lowercase letters are
-accepted too. Repeating it keeps existing solutions. `rp` and `rc` accept an
-input filename, relative to the workspace or absolute; omit it for terminal
-input or ordinary `< file` redirection.
+`tmpl` preserves existing files. Any input basename works: `rp A sample` reads
+`A/sample.in`. Omit the input argument for terminal input, or use `< file`.
+Run the commands from the workspace root. In a new Bash terminal, source the
+setup again; no shell startup files are required. `tp`/`tc` report every case
+and fail overall if any case fails; expected `.out` files stay untouched.
 
-Everything lives in the workspace. `tmpl/` contains only `template.py` and
-`template.cpp`. The three functions belong to the current terminal; no shell
-startup files or home-directory templates are required. In a new terminal,
-source the setup again, or paste the command block from the guide.
+For manually typing the setup at a contest, see [the setup guide](docs/setup.md).
+The Python template uses normal `input()` and includes `ints()` for integer lines.
 
-The Python template uses ordinary `input()`, returning strings. Its optional
-string-returning line-reader optimization is commented out.
+## Repository layout
 
-For the full contest-machine setup guide, including typing the setup from
-paper without this repository, see [SETUP.md](SETUP.md). It explains samples,
-stderr debugging, interpreter/compiler selection and submission.
+| Directory | Contents |
+| --- | --- |
+| [notebook/](notebook/README.md) | Current LaTeX guide and printable PDF |
+| [tmpl/](tmpl/) | The two current contest templates |
+| [reference/](reference/README.md) | Reusable C++/Python code and a stress-test script |
+| [tests/](tests/README.md) | Setup, reference-code and mathematics checks |
+| [docs/](docs/setup.md) | Setup and practice guides |
+| [practice/](docs/problem-packages.md) | Inspect/import problem ZIPs and run local checks |
+| [environment/](docs/practice-environment.md) | Optional CLI container; full desktop practice uses Proxmox |
+| [deploy/domjudge/](docs/domjudge.md) | k3s DOMjudge web/database and external judgehost groundwork |
+| [archive/](archive/README.md) | Previous BAPC PDFs and sources |
 
-## One reference document
+`setup.sh` installs the current templates and defines the terminal functions.
+The current print copy is [notebook/notebook.pdf](notebook/notebook.pdf), built
+from [notebook/notebook.tex](notebook/notebook.tex). Page 1 contains the indexes
+and setup; Python, C++ and algorithms/mathematics then have separate page ranges.
+The target is **25 reference pages plus the cover**. The index follows page labels
+automatically; the build rejects more than 25 reference pages.
 
-- [Unified PDF](notebook/notebook.pdf): index, setup, Python APIs, C++17 APIs,
-  mathematics and compact algorithm notes, in that order.
-- [Main LaTeX source](notebook/notebook.tex): the entry point for all edits.
-- [Notebook maintenance](notebook/README.md): layout, build and source map.
+## Practice environment and judging
 
-The guide focuses on language lookup and practical pitfalls. Tested algorithm
-implementations remain in `notebook/code/` and `notebook/tests/` for practice;
-the old BAPC print material is preserved in `notebook/legacy/`.
+These are complementary parts of the practice setup:
+
+- [Proxmox desktop](docs/proxmox-practice.md): the main practice workstation,
+  using the official ICPC image with NWERC checks and clean setup rehearsals.
+  Access the same desktop from Windows or Linux.
+- [Environment guide](docs/practice-environment.md): published tool versions
+  and the optional Docker/WSL2 CLI fallback.
+- [Problem packages](docs/problem-packages.md): import old contest ZIPs and
+  check your solutions against sample or secret tests locally.
+- [DOMjudge on k3s](docs/domjudge.md): a persistent web/database deployment
+  with a dedicated external judgehost, plus problem-import instructions.
+
+NWERC 2026 lists GCC 13.3.0 and PyPy 7.3.15 (Python 3.9.18) for judging.
+The notebook's current Python 3.10+ API assumptions need a compatibility pass
+before contest use. Local output comparisons are smoke checks, not official
+verdicts, especially for custom validators and multi-pass problems.
+See the [official system specification](https://2026.nwerc.eu/system).
+
+Imported archives and tests belong in ignored `practice-data/`; contestant files
+belong in ignored `workspaces/`. Neither is baked into the practice image.
+Deployment credentials are local files, excluded from Git.
+
+## Build and check
 
 ```sh
-bash notebook/build.sh        # rebuild notebook/notebook.pdf
-bash tests/setup.sh           # isolated workspace/command checks
-bash notebook/tests/run.sh    # original algorithm checks; needs GCC
+bash notebook/build.sh                 # rebuild the current PDF
+bash tests/setup.sh                    # isolated workspace/command checks
+bash tests/reference/run.sh            # reference-code checks; needs GCC
+python3 tests/math/check_graph_formulas.py
+python3 tests/math/check_number_formulas.py
+python3 -m unittest discover -s tests/practice -v
 ```
 
-NWERC 2026 allows up to 25 single-sided reference pages, with the university
-at the upper left and page numbers at the upper right. The front of the folder
-must name the institution. The guide includes a separate cover and enforces
-the 25-page reference limit. Check the current official rules before printing:
-[NWERC 2026 rules](https://2026.nwerc.eu/rules).
+See [notebook maintenance](notebook/README.md) for editing and building, and
+[test documentation](tests/README.md) for individual checks. Generated files
+stay in ignored `.build/` directories. Historical material belongs in `archive/`;
+there is one active notebook and one pair of contest templates.
+
+Official competition information: [NWERC 2026 rules](https://2026.nwerc.eu/rules).

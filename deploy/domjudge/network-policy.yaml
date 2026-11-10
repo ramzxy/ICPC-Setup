@@ -1,0 +1,21 @@
+# Only the DOMserver pods may reach the database over the pod network.
+# Requires the cluster's network-policy controller (enabled by default in k3s).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: database-from-domserver
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: domjudge
+      app.kubernetes.io/component: database
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: domjudge
+              app.kubernetes.io/component: domserver
+      ports:
+        - protocol: TCP
+          port: 3306

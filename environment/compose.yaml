@@ -1,0 +1,30 @@
+name: nwerc-practice
+services:
+  practice:
+    build:
+      context: .
+      args:
+        PRACTICE_UID: ${PRACTICE_UID:-1000}
+        PRACTICE_GID: ${PRACTICE_GID:-1000}
+    image: nwerc-practice:2026
+    platform: linux/amd64
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    environment:
+      PYTHONPATH: /repo
+    volumes:
+      - type: bind
+        source: ..
+        target: /repo
+        read_only: true
+      - type: bind
+        source: ../workspaces
+        target: /workspace
+        bind:
+          create_host_path: false
+    network_mode: none
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256

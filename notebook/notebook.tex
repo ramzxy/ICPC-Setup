@@ -4,7 +4,7 @@
 %       collections,itertools,functools,heapq,bisect,datetime,graphlib}.html
 \documentclass[9pt]{extarticle}
 \usepackage[a4paper, landscape, left=7mm, right=7mm, top=14mm, bottom=7mm,
-            headsep=3mm, headheight=12pt]{geometry}
+            headsep=3mm, headheight=18pt]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[scaled=0.92]{helvet}
@@ -18,15 +18,23 @@
 \usepackage{microtype}
 \DisableLigatures[<,>]{encoding=T1, family=tt*}
 
+% Light section tints; black text keeps the printed headers readable.
+\definecolor{pythonaccent}{RGB}{221,230,239}
+\definecolor{cppaccent}{RGB}{223,233,220}
+\definecolor{algorithmaccent}{RGB}{237,226,218}
+\colorlet{pageaccent}{black!15}
+
 % Match the main notebook's typography, margins, columns and headings.
 \newcommand{\university}{University of Twente}
 \newcommand{\teamname}{Nth time's the charm}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\textbf{\university}\enspace|\enspace\teamname}
-\newcommand{\supplementtitle}{NWERC | Python + C++}
-\fancyhead[C]{\supplementtitle}
-\fancyhead[R]{\textbf{\large\thepage}}
+\newcommand{\supplementtitle}{NWERC | Index and setup}
+\fancyhead[L]{\begingroup\setlength{\fboxsep}{2pt}%
+  \colorbox{pageaccent}{\makebox[\dimexpr\headwidth-2\fboxsep\relax]{%
+    \makebox[0pt][l]{\textbf{\university}\enspace|\enspace\teamname}%
+    \hfill\strut\supplementtitle\hfill
+    \makebox[0pt][r]{\textbf{\large\thepage}}}}\endgroup}
 \renewcommand{\headrulewidth}{0.4pt}
 \setlength{\columnsep}{4mm}
 \setlength{\columnseprule}{0.3pt}
@@ -78,6 +86,9 @@
   \par\addvspace{3pt}\needspace{3\baselineskip}%
   {\bfseries #1\enspace #2\label{formula:#1}}\par\nobreak}
 \newcommand{\symbols}[1]{\par\nobreak{\small\textit{Symbols:} #1\par}}
+\newcommand{\indexheading}[2]{%
+  \colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut\bfseries #2}}%
+  \par\vspace{2pt}}
 \newcommand{\lookup}[2]{#1\hfill\textbf{#2}\par}
 \newcommand{\indexpages}[2]{%
   \ifnum\getpagerefnumber{#1}=\getpagerefnumber{#2}\relax
@@ -111,20 +122,49 @@
 \restoregeometry
 \referencecontenttrue
 \setcounter{page}{1}
+% Page 1 contains only the grouped indexes and workspace setup.
 \input{sections/index}
 \begin{multicols*}{3}
 \raggedcolumns\raggedright
 \input{sections/workspace}
+\end{multicols*}
+\clearpage
+
+% Each reference part starts on a fresh page and flows within its own columns.
+\colorlet{pageaccent}{pythonaccent}
+\renewcommand{\supplementtitle}{NWERC | Python reference}
+\begin{multicols*}{3}
+\raggedcolumns\raggedright
 \lstset{style=python}
+\label{part:python:first}
 \input{sections/python-language}
+\label{part:python:last}
+\end{multicols*}
+\clearpage
+
+\colorlet{pageaccent}{cppaccent}
+\renewcommand{\supplementtitle}{NWERC | C++17 reference}
+\begin{multicols*}{3}
+\raggedcolumns\raggedright
+\label{part:cpp:first}
 \input{sections/cpp-language}
+\label{part:cpp:last}
+\end{multicols*}
+\clearpage
+
+\colorlet{pageaccent}{algorithmaccent}
+\renewcommand{\supplementtitle}{NWERC | Algorithms and mathematics}
+\begin{multicols*}{3}
+\raggedcolumns\raggedright
 \lstset{style=python}
+\label{part:algorithms:first}
 \begingroup\sheetstyle
-\input{sections/math-basics}
-\input{python/setup-and-number-theory}
-\input{python/graphs-and-counting}
-\input{python/sums-and-probability}
+\input{sections/math/basics}
+\input{sections/math/number-theory}
+\input{sections/math/graphs-and-counting}
+\input{sections/math/sums-and-probability}
 \par\endgroup
 \input{sections/algorithm-notes}
+\label{part:algorithms:last}
 \end{multicols*}
 \end{document}

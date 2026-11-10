@@ -1,2 +1,16 @@
 .DS_Store
 .build/
+__pycache__/
+*.py[cod]
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.toc
+*.synctex.gz
+/notebook/*.out
+/archive/**/*.out
+
+# Local practice archives, imported tests and writable contestant workspaces.
+/practice-data/
+/workspaces/

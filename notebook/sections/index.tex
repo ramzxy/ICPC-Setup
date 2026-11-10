@@ -1,101 +1,104 @@
-% Page references follow the unified guide automatically.
+% Separate indexes; all page references follow their content automatically.
 \begingroup
 \setlength{\parskip}{1pt}
 {\bfseries Index}\enspace{\small Page numbers; letter codes identify formula entries.}
 \par\vspace{2pt}
 \fontsize{8}{9}\selectfont
-\begin{minipage}[t]{.158\linewidth}
+\begin{minipage}[t]{.326\linewidth}
+\indexheading{pythonaccent}{Python reference (\indexpages{part:python:first}{part:python:last})}
+\begin{minipage}[t]{0.487\linewidth}
 \lookup{Arithmetic, Python}{\pageref{py:arithmetic}}
 \lookup{Arrays / lists}{\pageref{py:lists}}
-\lookup{Bell numbers}{\pageref{formula:C1} C1}
 \lookup{Big integers}{\pageref{py:integers}}
-\lookup{Binomial identities}{\pageref{formula:B1} B1}
-\lookup{Binomial, prime powers}{\pageref{formula:B4} B4}
-\lookup{Binomial probability}{\pageref{formula:P3} P3}
 \lookup{Bitmasks}{\pageref{py:bits}}
-\lookup{Bracelets}{\pageref{formula:C4} C4}
-\lookup{Burnside / orbits}{\pageref{formula:C3} C3}
-\lookup{C++ containers}{\pageref{cpp:containers}}
-\lookup{C++ input / output}{\pageref{cpp:io}}
-\lookup{C++ numeric pitfalls}{\pageref{cpp:numbers}}
-\lookup{C++ sorting / searching}{\pageref{cpp:order}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.158\linewidth}
-\lookup{C++ syntax / references}{\pageref{cpp:syntax}}
-\lookup{C++ template}{\pageref{setup:cpp}}
 \lookup{Caching}{\pageref{py:cache}}
 \lookup{Calendar / dates}{\pageref{py:dates}}
 \lookup{Combinatorial iterators}{\pageref{py:itertools}}
 \lookup{Complexities, Python}{\pageref{py:complexities}}
+\lookup{Decimals / fractions}{\indexpages{py:fractions}{py:decimal}}
+\lookup{Dictionaries / sets}{\indexpages{py:dict}{py:sets}}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.487\linewidth}
+\lookup{Functions / scope, Python}{\pageref{py:syntax}}
+\lookup{Heaps / merging}{\pageref{py:heap}}
+\lookup{Input / output}{\pageref{py:io}}
+\lookup{Input formats}{\pageref{py:formats}}
+\lookup{JSON}{\pageref{py:json}}
+\lookup{Queues / counters}{\indexpages{py:counter}{py:deque}}
+\lookup{Sorting / binary search}{\indexpages{py:sorting}{py:bisect}}
+\lookup{Strings / regex}{\indexpages{py:strings}{py:regex}}
+\lookup{Topological order}{\pageref{py:topological}}
+\end{minipage}
+\end{minipage}\hfill
+\begin{minipage}[t]{.158\linewidth}
+\indexheading{cppaccent}{C++ reference (\indexpages{part:cpp:first}{part:cpp:last})}
+\begin{minipage}[t]{1.0\linewidth}
+\lookup{C++ containers}{\pageref{cpp:containers}}
+\lookup{C++ input / output}{\pageref{cpp:io}}
+\lookup{C++ numeric pitfalls}{\pageref{cpp:numbers}}
+\lookup{C++ sorting / searching}{\pageref{cpp:order}}
+\lookup{C++ syntax / references}{\pageref{cpp:syntax}}
+\end{minipage}
+\end{minipage}\hfill
+\begin{minipage}[t]{.496\linewidth}
+\indexheading{algorithmaccent}{Algorithms and mathematics (\indexpages{part:algorithms:first}{part:algorithms:last})}
+\begin{minipage}[t]{0.317\linewidth}
+\lookup{Bell numbers}{\pageref{formula:C1} C1}
+\lookup{Binomial identities}{\pageref{formula:B1} B1}
+\lookup{Binomial, prime powers}{\pageref{formula:B4} B4}
+\lookup{Binomial probability}{\pageref{formula:P3} P3}
+\lookup{Bracelets}{\pageref{formula:C4} C4}
+\lookup{Burnside / orbits}{\pageref{formula:C3} C3}
 \lookup{Congruences / CRT}{\pageref{formula:N4} N4}
 \lookup{Coprime pairs}{\pageref{formula:D2} D2}
 \lookup{Counting / Catalan}{\pageref{math:counting}}
 \lookup{Covariance}{\pageref{formula:P1} P1}
 \lookup{Cycles in graphs}{\indexpages{formula:G1}{formula:G4} G1--4}
-\lookup{Debug / run helpers}{\pageref{setup:debug}}
-\lookup{Decimals / fractions}{\indexpages{py:fractions}{py:decimal}}
-\lookup{Dictionaries / sets}{\indexpages{py:dict}{py:sets}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.158\linewidth}
 \lookup{Diophantine equations}{\pageref{formula:N1} N1}
-\lookup{Direct terminal commands}{\pageref{setup:direct}}
 \lookup{Divisor sums}{\indexpages{formula:D1}{formula:D3} D1--3}
 \lookup{Dynamic programming}{\pageref{algo:dp}}
 \lookup{Elementary sums}{\pageref{math:basics}}
 \lookup{Exact modular division}{\pageref{formula:B5} B5}
 \lookup{Expectation}{\pageref{formula:P1} P1}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.317\linewidth}
 \lookup{Exponent reduction}{\indexpages{formula:N3}{formula:N5} N3,5}
 \lookup{Factorials / zeros}{\pageref{formula:B2} B2}
 \lookup{Fibonacci}{\pageref{formula:S3} S3}
 \lookup{Floor quotients}{\pageref{formula:D3} D3}
 \lookup{Four-cycles}{\pageref{formula:G3} G3}
-\lookup{Functions / scope, Python}{\pageref{py:syntax}}
 \lookup{Games / nim}{\pageref{algo:games}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.158\linewidth}
 \lookup{Gcd pair sums}{\pageref{formula:D2} D2}
 \lookup{Generating functions}{\pageref{formula:S4} S4}
 \lookup{Geometric distribution}{\pageref{formula:P4} P4}
 \lookup{Geometry formulas}{\pageref{math:geometry}}
 \lookup{Graph tools}{\pageref{algo:graphs}}
-\lookup{Heaps / merging}{\pageref{py:heap}}
 \lookup{Hypergeometric}{\pageref{formula:P5} P5}
-\lookup{Input / output}{\pageref{py:io}}
-\lookup{Input formats}{\pageref{py:formats}}
 \lookup{Inverses, modular}{\pageref{formula:N3} N3}
-\lookup{JSON}{\pageref{py:json}}
 \lookup{Lucas theorem}{\pageref{formula:B3} B3}
 \lookup{Markov / Chebyshev}{\pageref{formula:P6} P6}
 \lookup{M\"obius / inversion}{\pageref{formula:D1} D1}
-\end{minipage}\hfill
-\begin{minipage}[t]{.158\linewidth}
 \lookup{Necklaces}{\pageref{formula:C4} C4}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.317\linewidth}
 \lookup{Pair distances / sums}{\pageref{formula:S2} S2}
 \lookup{Permutation cycles}{\pageref{formula:C2} C2}
 \lookup{Planar graphs}{\pageref{formula:G7} G7}
 \lookup{Probability tails}{\pageref{formula:P2} P2}
 \lookup{Pr\"ufer / labeled trees}{\pageref{formula:G5} G5}
-\lookup{Python setup}{\pageref{setup:python}}
-\lookup{Queues / counters}{\indexpages{py:counter}{py:deque}}
 \lookup{Recurrences}{\indexpages{formula:S3}{formula:S4} S3--4}
 \lookup{Searching / greedy}{\pageref{algo:search}}
-\lookup{Sorting / binary search}{\indexpages{py:sorting}{py:bisect}}
 \lookup{Spanning trees}{\pageref{formula:G6} G6}
 \lookup{Stirling numbers}{\pageref{formula:C1} C1}
 \lookup{String matching}{\pageref{algo:strings}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.158\linewidth}
-\lookup{Strings / regex}{\indexpages{py:strings}{py:regex}}
-\lookup{Terminal commands}{\pageref{setup:commands}}
 \lookup{Testing / stress}{\pageref{algo:testing}}
-\lookup{Topological order}{\pageref{py:topological}}
 \lookup{Totient, Euler $\varphi$}{\pageref{formula:N2} N2}
 \lookup{Trees / ancestors}{\pageref{algo:trees}}
 \lookup{Triangles}{\pageref{formula:G2} G2}
 \lookup{Variance}{\pageref{formula:P1} P1}
 \lookup{Walks, adjacency}{\pageref{formula:G3} G3}
 \lookup{Weighted sums}{\pageref{formula:S1} S1}
-\lookup{Workspace setup}{\pageref{setup:workspace}}
+\end{minipage}
 \end{minipage}
 \par\vspace{3pt}
 \textbf{Notation:} $\sum$ sum; $\prod$ product; $a\mid b$: $a$ divides $b$; $\gcd$: greatest common divisor; $\operatorname{lcm}$: least common multiple; $\lfloor x\rfloor$: round down; $\lceil x\rceil$: round up; $\binom nk$: choose $k$ of $n$; $[P]$: 1 if $P$ holds, else 0.

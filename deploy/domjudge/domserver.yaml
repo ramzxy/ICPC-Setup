@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: domserver
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: domjudge
+    app.kubernetes.io/component: domserver
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: domserver
+spec:
+  replicas: 1
+  # The official entrypoint installs/upgrades the database. Avoid concurrent starts.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: domjudge
+      app.kubernetes.io/component: domserver
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: domjudge
+        app.kubernetes.io/component: domserver
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/os: linux
+        kubernetes.io/arch: amd64
+      initContainers:
+        - name: wait-for-database
+          image: docker.io/library/mariadb:11.4.13
+          command:
+            - sh
+            - -ec
+            - |
+              until mariadb -h mariadb -u domjudge -D domjudge -Nse 'SELECT 1'; do
+                sleep 3
+              done
+          env:
+            - name: MYSQL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: domjudge-database
+                  key: DB_PASSWORD
+      containers:
+        - name: domserver
+          image: docker.io/domjudge/domserver:9.0.1
+          env:
+            - name: MYSQL_HOST
+              value: mariadb
+            - name: MYSQL_DATABASE
+              value: domjudge
+            - name: MYSQL_USER
+              value: domjudge
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: domjudge-database
+                  key: DB_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: domjudge-database
+                  key: DB_ROOT_PASSWORD
+            - name: DJ_DB_INSTALL_BARE
+              value: "0"
+            - name: CONTAINER_TIMEZONE
+              value: Europe/Amsterdam
+            - name: FPM_MAX_CHILDREN
+              value: "4"
+            - name: FPM_MEMORY_LIMIT
+              value: 512M
+          ports:
+            - name: http
+              containerPort: 80
+          startupProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi

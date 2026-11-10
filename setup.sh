@@ -3,48 +3,40 @@
 # At the contest, type the templates and the marked command block.
 
 # BEGIN CONTEST COMMANDS
-CONTEST_ROOT=$PWD
-PYTHON=${PYTHON:-python3}
-CXX=${CXX:-g++}
-unalias tmpl rc rp 2>/dev/null || true
 tmpl() {
-    [ "$#" -le 1 ] || { printf 'tmpl [last-letter]\n' >&2; return 2; }
-    local last=${1-Z} letter ext file
-    case "$last" in [a-zA-Z]) ;; *) printf 'Use one letter A-Z.\n' >&2; return 2 ;; esac
-    last=$(printf '%s' "$last" | tr '[:lower:]' '[:upper:]')
-    for letter in {A..Z}; do
-        mkdir -p -- "$CONTEST_ROOT/$letter" || return
-        for ext in py cpp; do
-            file="$CONTEST_ROOT/$letter/$letter.$ext"
-            if [ ! -e "$file" ] && [ ! -L "$file" ]; then
-                cp "$CONTEST_ROOT/tmpl/template.$ext" "$file" || return
-            fi
-        done
-        [ "$letter" = "$last" ] && break
+    local p
+    for p in {A..N}; do
+        cp -rn tmpl/. "$p"
     done
 }
-rc() (
-    [ "$#" -ge 1 ] && [ "$#" -le 2 ] || { printf 'rc letter [input-file]\n' >&2; return 2; }
-    case "$1" in [a-zA-Z]) ;; *) printf 'Use one letter A-Z.\n' >&2; return 2 ;; esac
-    local letter
-    letter=$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]')
-    cd -- "$CONTEST_ROOT" || return
-    "$CXX" -std=c++17 -O2 -Wall -Wextra -g -DLOCAL \
-        "$letter/$letter.cpp" -o "$letter/$letter" || return
-    if [ "$#" -eq 2 ]; then "./$letter/$letter" < "$2"
-    else "./$letter/$letter"
-    fi
+rc() {
+    local p=${1^^} input=/dev/stdin
+    [ "$#" -gt 1 ] && input="$p/$2.in"
+    g++ -std=c++17 -O2 -DLOCAL "$p/cpp.cpp" -o "$p/$p" &&
+        "./$p/$p" < "$input"
+}
+rp() {
+    local p=${1^^} input=/dev/stdin
+    [ "$#" -gt 1 ] && input="$p/$2.in"
+    LOCAL=1 python3 "$p/py.py" < "$input"
+}
+_t() (
+    set -o pipefail
+    shopt -s failglob
+    bad=0
+    for f in "$1"/*.in; do
+        echo "$f"
+        "${@:2}" < "$f" | diff -bB "${f%.in}.out" - &&
+            echo OK || { echo FAIL; bad=1; }
+    done
+    exit "$bad"
 )
-rp() (
-    [ "$#" -ge 1 ] && [ "$#" -le 2 ] || { printf 'rp letter [input-file]\n' >&2; return 2; }
-    case "$1" in [a-zA-Z]) ;; *) printf 'Use one letter A-Z.\n' >&2; return 2 ;; esac
-    local letter
-    letter=$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]')
-    cd -- "$CONTEST_ROOT" || return
-    if [ "$#" -eq 2 ]; then LOCAL=1 "$PYTHON" "$letter/$letter.py" < "$2"
-    else LOCAL=1 "$PYTHON" "$letter/$letter.py"
-    fi
-)
+tp() { _t "${1^^}" rp "$1"; }
+tc() {
+    local p=${1^^}
+    g++ -std=c++17 -O2 -DLOCAL "$p/cpp.cpp" -o "$p/$p" &&
+        _t "$p" "./$p/$p"
+}
 # END CONTEST COMMANDS
 
 # Installer for practice machines. No exits, shell-option changes, or rc edits.
@@ -55,15 +47,13 @@ _icpc_install() {
     fi
     if [ -n "${BASH_VERSION:-}" ]; then
         setup_source=${BASH_SOURCE[0]}
-    elif [ -n "${ZSH_VERSION:-}" ]; then
-        setup_source=${(%):-%x}
-    else printf 'Use Bash or zsh.\n' >&2; return 2
+    else printf 'Use Bash.\n' >&2; return 2
     fi
     setup_source=$(cd -- "$(dirname -- "$setup_source")" && pwd) || return
     setup_target=${1:-.}
     mkdir -p -- "$setup_target/tmpl" || return
     setup_target=$(cd -- "$setup_target" && pwd) || return
-    for setup_file in template.py template.cpp; do
+    for setup_file in py.py cpp.cpp; do
         if [ -e "$setup_target/tmpl/$setup_file" ] || [ -L "$setup_target/tmpl/$setup_file" ]; then
             printf 'Kept existing tmpl/%s\n' "$setup_file"
         else
@@ -71,10 +61,9 @@ _icpc_install() {
             printf 'Created tmpl/%s\n' "$setup_file"
         fi
     done
-    CONTEST_ROOT=$setup_target
-    printf '\nWorkspace: %s\n' "$CONTEST_ROOT"
-    printf 'Enable commands in each terminal with:\nsource %q %q\n' "$setup_source/setup.sh" "$CONTEST_ROOT"
-    printf 'Then: tmpl C    rp a A/1.in    rc b B/1.in\n'
+    printf '\nWorkspace: %s\n' "$setup_target"
+    printf 'Enable commands in each terminal with:\nsource %q %q\n' "$setup_source/setup.sh" "$setup_target"
+    printf 'cd into that workspace, then: tmpl    rp A 1    rc B 1    tp A    tc B\n'
 }
 if _icpc_install "$@"; then
     unset -f _icpc_install

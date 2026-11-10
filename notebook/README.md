@@ -1,49 +1,46 @@
-# Unified NWERC guide
+# Current NWERC guide
 
-Build and edit `notebook.tex`; print `notebook.pdf`. It starts at reference page
-1 after a cover. Content flows continuously across landscape A4 columns:
-index, local workspace setup, Python, C++17, mathematics, then algorithm notes.
-The index follows labels automatically. The PDF build rejects more than 25
-reference pages; the cover is separate.
+Edit `notebook.tex`; print `notebook.pdf`. Numbering starts at reference page 1
+after the cover. Page 1 contains the separate Python, C++ and algorithm indexes
+and workspace setup. Each reference part starts on a fresh page; content flows
+across columns within that part. Each setup source file stays in one column.
 
-## Source map
+The target is 25 reference pages plus the cover. The index follows labels
+automatically, and the build rejects more than 25 reference pages. Pale blue,
+green and peach page headers match the Python, C++ and algorithm index headings.
+
+## Sources
 
 | Path | Purpose |
 | --- | --- |
-| `notebook.tex` | Shared layout and reading order |
-| `sections/index.tex` | Automatic topic/page index |
-| `sections/workspace.tex` | Setup guide, printed templates and commands |
-| `../tmpl/`, `../setup.sh` | Actual starter files and terminal functions |
+| `notebook.tex` | Shared layout, colors and page-separated reading order |
+| `sections/index.tex` | Separate topic indexes with automatic page references |
+| `sections/workspace.tex` | Printed setup guide and actual template listings |
+| `../tmpl/`, `../setup.sh` | Current starter files and terminal functions |
 | `sections/python-language.tex` | Python syntax and standard-library APIs |
 | `sections/cpp-language.tex` | C++17 syntax and standard-library APIs |
-| `sections/math-basics.tex`, `python/` math sources | Formula lookup |
+| `sections/math/` | Everyday formulas, number theory, graphs and probability |
+| `sections/math/SOURCES.md` | Mathematics sources and verification notes |
 | `sections/algorithm-notes.tex` | Technique selection and pitfalls |
-| `code/`, `tests/` | Preserved algorithm implementations and checks |
-| `legacy/` | Frozen BAPC PDFs and original main source |
 
-Older algorithm chapters in `sections/` remain available for practice. They
-are not all printed in the current guide. The former `python/` supplement is
-superseded as a separate document; its mathematics sources are shared here.
-Do not concatenate old PDFs to make the NWERC print copy.
+Reusable implementations are in [../reference/](../reference/README.md), with
+checks in [../tests/](../tests/README.md). Older chapters and print snapshots
+are in [../archive/](../archive/README.md); they are not active notebook inputs.
 
-## Build and validate
+## Build
+
+From the repository root:
 
 ```sh
-bash notebook/build.sh             # TeX Live or MiKTeX with latexmk
-bash tests/setup.sh                # run from the repository root
-bash notebook/tests/run.sh         # original algorithm tests; GCC required
+bash notebook/build.sh
 ```
 
-Build files and visual checks go in the ignored `.build/` directory. For an
-alternate PDF destination, pass it to `notebook/build.sh` (relative paths are
-resolved from `notebook/`). `python/build.sh` forwards to the unified build for
-compatibility. To preview an original algorithm chapter, use `preview.sh`.
+Requires TeX Live or MiKTeX with `latexmk` and the packages listed in the main
+source. Build files and visual checks go in the ignored `.build/` directory.
+The exported `notebook.pdf` is the print copy; refresh it after source edits.
+An optional output directory passed to `build.sh` is relative to `notebook/`.
 
-The printed setup reads the real templates and command block in `../setup.sh`.
-If that block moves, update its listing line range in `sections/workspace.tex`.
-Keep C++17 and Python 3.10-compatible examples, and check compilation and the
-rendered PDF after changes. Algorithm code has meaningful tests; language
-examples should stay short enough to scan quickly.
-
-Rules: [NWERC 2026](https://2026.nwerc.eu/rules). Python and mathematics source
-references are in `python/SOURCES.md`.
+The printed setup reads the actual templates and the marked function block in
+`../setup.sh`. If that block moves, update its main and optional-test listing line ranges in
+`sections/workspace.tex`. Keep examples compatible with C++17 and Python 3.10,
+then check compilation, page boundaries and the rendered PDF after changes.

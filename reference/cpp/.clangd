@@ -1,0 +1,4 @@
+# The snippets in reference/cpp are pieces of a full program, so clangd cannot check
+# them on their own. tests/reference/run.sh compiles them for real.
+Diagnostics:
+  Suppress: '*'
