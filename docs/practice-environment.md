@@ -164,8 +164,11 @@ intended for running arbitrary hostile submissions.
 Use the [Proxmox guide](proxmox-practice.md) for VM settings, raw-disk import,
 toolchain verification, desktop access and clean snapshots. Proxmox imports the
 decompressed `.img` directly; an intermediate qcow2 conversion is unnecessary.
-The official image has not been downloaded or booted here. Confirm a working,
-persistent Xfce desktop and the listed versions before freezing the base VM.
+The original compressed image and its complete decompressed contents have been
+verified locally. Initial user-run VM trials used a truncated uploaded `.img`;
+the Proxmox guide records the required raw size/checksum and recovery procedure.
+Confirm a working, persistent Xfce desktop from the complete source and the
+listed versions before freezing the base VM.
 
 ## Validation status
 
@@ -174,9 +177,11 @@ The Dockerfile includes version and standard-library/static-C++ smoke checks.
 The official PyPy archive was downloaded, its SHA256 verified, and the bundled
 module-builder paths and CFFI sources inspected before writing the Dockerfile.
 Building/running the container remains unverified because the Docker daemon was
-stopped. The official desktop image has not been downloaded or booted either.
-Run the container build-time guards and verify the VM tools before relying on
-toolchain parity.
+stopped. The desktop image's compressed checksum, complete decompressed length
+and raw checksum have been verified. The user has attempted Proxmox boots, but
+the earlier uploaded raw file was truncated; a working desktop from the complete
+source still needs confirmation. Run the container build-time guards or verify
+the VM tools before relying on toolchain parity.
 
 The official PyPy archive is pinned to the SHA256 from
 [PyPy's published checksum list](https://pypy.org/checksums.html):

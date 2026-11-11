@@ -1,4 +1,6 @@
 import os, sys
+# input = sys.stdin.readline  # optional; str, keeps newline
+# write = sys.stdout.write    # optional; adds no newline
 
 def dbg(*args):
     if os.getenv("LOCAL"):

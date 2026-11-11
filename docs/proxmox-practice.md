@@ -6,7 +6,8 @@ client needs a local Linux installation. Keep DOMjudge and its judgehost separat
 from this contestant VM.
 
 This is a provisioning guide, checked against the public documentation on
-2026-11-10. No Proxmox VM has been created or boot-tested from this repository.
+2026-11-10. The user's first Proxmox trials exposed a truncated uploaded image;
+desktop boot from the complete image still needs verification.
 
 ## What to create
 
@@ -44,12 +45,24 @@ for firmware, storage, import and console settings.
 
 ## Import the official ICPC image
 
+The download contains a complete, preconfigured bootable OS disk image, including
+the desktop and contest tools. It is not a conventional OS installer. The ICPC
+instructions describe running the OS directly from the imaged USB drive; the
+[World Finals instructions](https://image.icpc.global/wf2026/ImageBuildInstructions.html)
+also describe copying the whole disk onto an internal drive with Clonezilla.
+For Proxmox, import the image as the VM's boot disk.
+
 NWERC uses a modified World Finals image. Start with the
 [official ICPC download and installation page](https://image.icpc.global/icpc2026/ImageBuildInstructions.html),
 which currently links `icpc2026-2026-05-29_image-amd64.img.gz` (about 7.9 GB).
 Download that image and its published SHA256 file into a staging directory with
 enough free space. Transfer them to the Proxmox node if downloaded elsewhere.
-This is a raw disk image, not an ISO to upload as CD-ROM media.
+Proxmox also accepts `.img` files through its **ISO Images** upload dialog, so
+SCP is optional. Extract the `.gz` first for that route. This uploads the file;
+it does not turn the OS disk image into an installer. Import it as a VM disk
+after uploading. The commands below provide the CLI route; current Proxmox
+versions also offer guest disk-image uploads under **Import** content.
+See the [Proxmox upload implementation](https://github.com/proxmox/pve-manager/blob/master/www/manager6/window/UploadToStorage.js).
 
 In the staging directory on the Proxmox node, verify the download against the
 [published checksum](https://image.icpc.global/icpc2026/SHA256SUMS.amd64.txt):
@@ -67,7 +80,21 @@ and `/path/` with the chosen VM ID, VM-disk storage name and staging directory:
 
 ```sh
 gzip -dk icpc2026-2026-05-29_image-amd64.img.gz
-qemu-img info -f raw icpc2026-2026-05-29_image-amd64.img
+stat -c '%s' icpc2026-2026-05-29_image-amd64.img
+sha256sum icpc2026-2026-05-29_image-amd64.img
+```
+
+For this exact release, the complete raw image must be **29,884,416,000 bytes**.
+Its uncompressed SHA256 is
+`e091ae32875073b7594e562d4f33b3888e61ad9df2b01b363a610bc48f51da26`.
+This raw checksum was calculated locally from a complete decompression of the
+organizer-checksummed `.gz`, with gzip's integrity check passing. It is not a
+separately published organizer checksum. If extracting on Windows and uploading
+the `.img`, check both its size and SHA256 again on the Proxmox node.
+
+Only import after the size and checksum match:
+
+```sh
 qm disk import VMID /path/icpc2026-2026-05-29_image-amd64.img STORAGE
 ```
 
@@ -75,14 +102,43 @@ No intermediate qcow2 conversion is required. `qm importdisk` is an alias for
 `qm disk import`. In the VM's **Hardware** tab, attach the resulting **Unused
 Disk** as SCSI0. Use the imported volume actually shown by Proxmox rather than
 guessing its name. Under **Options > Boot Order**, enable SCSI0 and put it first.
-Then start the VM and open its console.
+To give the imported disk the intended 64 GiB capacity, with the VM stopped:
 
-The ICPC instructions document physical USB booting, not Proxmox. Confirm that
-the desktop boots and a file survives a full shutdown and restart before treating
-this as an installed, persistent workstation. If it presents an installer,
-retain the image disk and deliberately add a separate installation target disk.
-Inspect the disk layout before resizing: increasing virtual disk capacity alone
-does not grow guest partitions or filesystems.
+```sh
+qm disk resize VMID scsi0 64G
+```
+
+Then start the VM and open its console. This increases virtual capacity; growing
+the guest filesystem is a separate operation.
+
+### What went wrong in the initial trial
+
+The earlier uploaded `.img` was only **27,263,500,288 bytes**, missing
+**2,620,915,712 bytes (about 2.44 GiB)** from the complete source. Its root
+filesystem extends to disk byte 29,883,367,424. Expanding the truncated disk
+adds empty space and cannot restore the missing file contents. Reusing that
+incomplete `.img` for a fresh VM repeats the problem.
+
+The observed boot failures included GRUB disk-boundary/kernel errors, root
+filesystem corruption and a crashing LightDM greeter with missing GSettings
+schema data. These are consistent with missing filesystem data, though the
+precise extraction/upload step that truncated the earlier copy is not known.
+Use a complete, verified source for a fresh import before judging whether the
+image's kernel or graphics stack is compatible with the VM. A filesystem repair
+can fix metadata while leaving missing file contents unrecovered.
+
+If the firmware reports a Secure Boot or bad-shim-signature error, restart with
+the console open and press Esc at the firmware screen. Open **Device Manager >
+Secure Boot Configuration**, uncheck **Attempt Secure Boot**, save with F10 and
+reset. Keep OVMF/UEFI selected. This is useful if the EFI disk was originally
+created with Pre-Enroll Keys enabled.
+
+The generic ICPC instructions document physical USB booting, not Proxmox.
+The imported disk already contains the OS; no separate OS installation step is
+expected. Confirm that the desktop boots and a file survives a full shutdown
+and restart before freezing the practice baseline. Inspect the disk layout
+before resizing: increasing virtual disk capacity alone does not grow guest
+partitions or filesystems.
 
 ## Match the NWERC workstation
 
@@ -171,5 +227,7 @@ After checking the desktop, tools, persistence and sample programs:
    intended local documentation. Restrict general Internet access at the VM's
    network/firewall while keeping the Proxmox management console reachable.
 
-The baseline is ready only after these checks pass. No image has been downloaded
-or booted here, and no Proxmox configuration has been changed.
+The baseline is ready only after these checks pass. The original compressed
+download and its complete decompressed contents have been verified locally;
+the user is operating Proxmox. A working desktop from the corrected source has
+not yet been observed.

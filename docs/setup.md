@@ -41,6 +41,21 @@ is enabled locally by `rp`/`rc`. The small C++ debug macro handles streamable
 values; loop over vectors when debugging them. Compilation failure stops `rc`
 before it can run an old executable.
 
+The Python template also includes two **commented-out** fast I/O aliases:
+
+```python
+# input = sys.stdin.readline
+# write = sys.stdout.write
+```
+
+Uncomment either when useful for large, non-interactive input/output. Fast line
+input still returns `str`, including the trailing newline; use
+`input().rstrip("\r\n")` for text comparisons. It returns `""` at EOF instead
+of raising `EOFError`. Integer parsing and `ints()` work with either reader.
+For many output lines, collect strings in `out`, then replace the repeated
+`print` calls with `write("\n".join(out) + "\n")`. `write` adds no newline of
+its own. Normal `print()` and stderr debugging remain available.
+
 ## Test all provided samples
 
 Save each expected output alongside its input: `A/1.in` with `A/1.out`,

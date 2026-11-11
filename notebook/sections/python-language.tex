@@ -13,7 +13,12 @@ Keep it as the default. Optional faster line input still returns strings:}
 \begin{lstlisting}
 # import sys
 # input = sys.stdin.readline  # optional; keeps newline
+# write = sys.stdout.write    # optional; adds no newline
 \end{lstlisting}
+\hint{\texttt{readline()} returns \texttt{""} at EOF; built-in \texttt{input()}
+raises \texttt{EOFError}. Strip line endings for text comparisons with
+\texttt{input().rstrip("\textbackslash r\textbackslash n")}.
+The template keeps both fast I/O aliases commented out.}
 \hint{Optional whole-file integer input (not interactive; uses more memory):}
 \begin{lstlisting}[label=py:tokens]
 import sys
@@ -65,6 +70,8 @@ for line in sys.stdin:
 
 out = [str(x*x) for x in range(5)]
 print("\n".join(out))
+# Alternative using the optional write alias:
+# write("\n".join(out) + "\n")
 \end{lstlisting}
 \hint{These are separate input formats: follow the statement.
 Do not assume one integer per line. For a fixed number of tokens spread

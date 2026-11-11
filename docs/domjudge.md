@@ -1,5 +1,9 @@
 # DOMjudge practice hosting
 
+For a fresh default k3s VM and public HTTPS at `domjudge.rickvm.dev`, start with
+[the k3s walkthrough](k3s-domjudge.md). The base deployment below remains private;
+the optional public ingress is applied separately.
+
 Research checked 10 November 2026. These files are deployment groundwork; nothing
 has been applied to your cluster. The current stable release is DOMjudge **9.0.1**.
 The examples pair its server and judgehost images with MariaDB **11.4.13**.
