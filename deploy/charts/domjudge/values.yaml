@@ -1,0 +1,76 @@
+fullnameOverride: ""
+timezone: Europe/Amsterdam
+nodeSelector:
+  kubernetes.io/os: linux
+  kubernetes.io/arch: amd64
+
+# The chart never generates/rotates credentials. Create this Secret before install.
+# Empty existingSecret means <release>-database.
+database:
+  existingSecret: ""
+  rootPasswordKey: DB_ROOT_PASSWORD
+  passwordKey: DB_PASSWORD
+  name: domjudge
+  username: domjudge
+  image: docker.io/library/mariadb:11.4.13
+  persistence:
+    size: 8Gi
+    # null uses the cluster default; "" explicitly requests no StorageClass.
+    storageClass: null
+    existingClaim: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+domserver:
+  image: docker.io/domjudge/domserver:9.0.1
+  installDemoData: false
+  fpmMaxChildren: 4
+  fpmMemoryLimit: 512M
+  # Comma-separated actual reverse-proxy IPs/CIDRs. Default k3s pod CIDR is
+  # 10.42.0.0/16; set that explicitly in your public deployment values if used.
+  trustedProxies: ""
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+networkPolicy:
+  enabled: true
+
+service:
+  type: ClusterIP
+  # Used only when type is NodePort; accessible on the node's LAN/Tailscale IP.
+  nodePort: 30080
+
+ingress:
+  enabled: false
+  className: traefik
+  host: domjudge.rickvm.dev
+  # Resolver must already exist in Traefik. Empty uses the existing TLS Secret.
+  certResolver: ""
+  tlsSecretName: ""
+  redirectHttp: true
+
+# Experimental, opt-in worker for a DEDICATED practice k3s VM.
+# It has root-equivalent host access. Actual compilation/judging must be verified.
+judgehost:
+  enabled: false
+  image: docker.io/domjudge/judgehost:9.0.1
+  # One daemon bound to CPU 1: node must have at least two available logical CPUs.
+  daemonId: 1
+  username: judgehost
+  # Empty existingSecret means <release>-judgehost, key JUDGEDAEMON_PASSWORD.
+  existingSecret: ""
+  passwordKey: JUDGEDAEMON_PASSWORD
+  # Empty uses this release's internal DOMserver Service, with trailing slash.
+  baseUrl: ""
+  # Set to the dedicated node's kubernetes.io/hostname when using multiple nodes.
+  nodeSelector: {}

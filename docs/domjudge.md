@@ -1,5 +1,16 @@
 # DOMjudge practice hosting
 
+For day-to-day use, read [the short operator's manual](domjudge-manual.md):
+competition setup, ZIP uploads, teams/logins and basic server management.
+
+**New installations:** [the local Helm chart](../deploy/charts/domjudge/README.md)
+is now the primary installation route. It includes web/database resources,
+optional Traefik ACME HTTPS and a disabled-by-default experimental Kubernetes
+worker. The Kustomize and external-VM steps below remain alternatives, not extra
+steps to apply on top of the Helm release. The dedicated k3s VM now has a
+[verified private deployment](domjudge-deployment.md), including C++/Python
+judging; public forwarding and HTTPS have not been enabled.
+
 For a fresh default k3s VM and public HTTPS at `domjudge.rickvm.dev`, start with
 [the k3s walkthrough](k3s-domjudge.md). The base deployment below remains private;
 the optional public ingress is applied separately.
@@ -165,12 +176,16 @@ and timeout limits against those sizes. Upload individual problems, not the
 entire contest bundle. The twelve problems expand to about 1.2 GiB before database
 and backup overhead; size the database volume accordingly.
 
-There is an important version gate: `hastyhaul` uses multi-pass validation.
-The 9.0 stable manual does not provide that workflow; the upstream enhancement is
-[still tracked separately](https://github.com/DOMjudge/domjudge/issues/2307), while
-[multi-pass instructions are in the 10.0 development manual](https://www.domjudge.org/snapshot/manual/config-advanced.html#multi-pass-problems).
-Treat that problem as blocked on a tested compatible DOMjudge release/build.
-Do not strip the multi-pass flag or treat an ordinary run as an accepted verdict.
+For NWERC 2025, use the official
+[legacy archive](https://2025.nwerc.eu/nwerc2025-problems-legacy.zip), as recommended
+on [the contest website](https://2025.nwerc.eu/). The installed 9.0.1 importer and
+worker support Hasty Haul's multi-pass protocol: the three-pass limit was retained,
+both C++ and Python jury solutions passed, and a deliberately wrong solution was
+rejected. Sandbox metadata confirmed actual second and third executions, not
+just a first-pass acceptance. The earlier unsupported-version assumption based
+on the manual was incorrect for this installed build. Preserve the multi-pass
+flag and validator; test the protocol again when changing backend versions.
+See [the practice record](nwerc2025-practice.md).
 
 Create an admin-associated jury team if you want bundled jury solutions submitted
 automatically. Before using the set for practice, inspect the import warnings,
@@ -197,5 +212,6 @@ Custom web assets/configuration require separate persistence/backup if you add t
 
 Before real deployment, resolve the cluster architecture, persistent storage and
 backup location, judge VM placement/cgroup support, HTTPS/private routing, and
-which tested backend version handles the archive's multi-pass problem. Image
-pulls, bootstrap, submission judging and restarts must still be tested on that host.
+backend compatibility with the intended problem protocols. Image pulls,
+bootstrap and C++/Python judging have now been tested on the recorded k3s host;
+other hosts and future upgrades still require their own checks.

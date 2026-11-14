@@ -1,0 +1,9 @@
+# Apply only after private admin/worker account setup and DNS/port forwarding.
+# Configure resolver first: deploy/domjudge/k3s/traefik-acme.yaml
+ingress:
+  enabled: true
+  host: domjudge.rickvm.dev
+  certResolver: letsencrypt
+domserver:
+  # Confirm your actual cluster pod CIDR before using this default k3s range.
+  trustedProxies: "10.42.0.0/16"

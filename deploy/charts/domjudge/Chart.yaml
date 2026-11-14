@@ -1,0 +1,7 @@
+apiVersion: v2
+name: domjudge
+description: DOMjudge practice server, persistent MariaDB and optional k3s judgehost
+type: application
+version: 0.1.1
+appVersion: "9.0.1"
+kubeVersion: ">=1.26.0-0"

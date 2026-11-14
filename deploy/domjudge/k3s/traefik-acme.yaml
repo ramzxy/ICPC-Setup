@@ -1,0 +1,27 @@
+# Optional alternative to cert-manager for a default single-node k3s install.
+# Extends the existing Traefik release; it does NOT install a second proxy.
+# Back up the /data/acme.json PVC. Keep one replica for this ACME file backend.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      replicas: 1
+    updateStrategy:
+      type: Recreate
+      rollingUpdate: null
+    podSecurityContext:
+      fsGroup: 65532
+    persistence:
+      enabled: true
+      size: 128Mi
+      storageClass: local-path
+    certificatesResolvers:
+      letsencrypt:
+        acme:
+          storage: /data/acme.json
+          httpChallenge:
+            entryPoint: web

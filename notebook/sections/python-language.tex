@@ -18,7 +18,7 @@ Keep it as the default. Optional faster line input still returns strings:}
 \hint{\texttt{readline()} returns \texttt{""} at EOF; built-in \texttt{input()}
 raises \texttt{EOFError}. Strip line endings for text comparisons with
 \texttt{input().rstrip("\textbackslash r\textbackslash n")}.
-The template keeps both fast I/O aliases commented out.}
+Add these aliases only when needed; the template uses built-in \texttt{input()}.}
 \hint{Optional whole-file integer input (not interactive; uses more memory):}
 \begin{lstlisting}[label=py:tokens]
 import sys

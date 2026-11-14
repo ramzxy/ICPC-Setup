@@ -1,51 +1,22 @@
-% Flow naturally; each source file stays in one column.
+% Keep each setup file together; the directory tree starts on the left.
 \section{Workspace and setup}\label{setup:workspace}
-Use Bash. Create a workspace, then save the two templates below in
-\texttt{tmpl/} before running \texttt{tmpl}.
-\begin{lstlisting}[language=bash]
-mkdir -p contest/tmpl
-cd contest
+\subsection{Directory structure}\label{setup:structure}
+\begin{lstlisting}[language={}]
+contest/
+    tmpl/
+        1.in
+        1.out
+        py.py
+        cpp.cpp
+    s.sh
 \end{lstlisting}
-
-\par\noindent\begin{minipage}{\linewidth}
-\subsection{Terminal functions}\label{setup:commands}
-\lstinputlisting[language=bash,firstline=6,lastline=22]{../setup.sh}
-\end{minipage}\par
-\hint{Type once per terminal; run from the workspace root.
-No \texttt{.bashrc} access is needed. Hooked arrows mark printed wraps:
-join those fragments into one shell line.}
-
-\hint{\texttt{dbg(...)} writes to stderr, so debugging stays visible when
-answers go to a file. \texttt{rp}/\texttt{rc} enable it locally.
-Python: \texttt{dbg(f"\{n=\}")}; C++: \texttt{dbg(n);}
-(C++ values must support streaming; loop over containers).
-Submit \texttt{A/py.py} or \texttt{A/cpp.cpp}.}
-
-\hint{For practice with this repo available:
-\texttt{source /path/to/ICPC-Setup/setup.sh .}
-copies the templates and enables the commands.}
-
-\par\noindent\begin{minipage}{\linewidth}
-\subsection{tmpl/py.py}\label{setup:python}
-\lstinputlisting[style=python,basicstyle=\ttfamily\fontsize{8}{8.5}\selectfont]{../tmpl/py.py}
-\end{minipage}\par
-\hint{\texttt{ints()}: \texttt{n,m=ints()} or \texttt{a=ints()}.}
-
-\par\noindent\begin{minipage}{\linewidth}
-\subsection{tmpl/cpp.cpp}\label{setup:cpp}
-\lstinputlisting[style=cpp,basicstyle=\ttfamily\fontsize{8}{8.5}\selectfont]{../tmpl/cpp.cpp}
-\end{minipage}\par
-\par\noindent\begin{minipage}{\linewidth}
-\subsection{Optional: test all samples}
-\lstinputlisting[language=bash,firstline=23,lastline=39]{../setup.sh}
-\end{minipage}\par
-\hint{Pair \texttt{A/1.in} with expected \texttt{A/1.out}.
-All cases run; any failure gives a nonzero status. Spacing/blank lines are
-ignored; custom or floating-point outputs need manual checks.}
 
 \par\noindent\begin{minipage}{\linewidth}
 \subsection{Create and run}\label{setup:debug}
 \begin{lstlisting}[language=bash]
+mkdir -p contest/tmpl
+cd contest            # save files as shown
+source s.sh           # repeat in each terminal
 tmpl                  # copy tmpl/ into A-N
 rp A                  # Python, terminal input
 rc A                  # compile and run C++
@@ -55,5 +26,49 @@ tp A                  # test Python on all A/*.in
 tc A                  # compile once, test all C++
 \end{lstlisting}
 \end{minipage}\par
+\hint{Pair \texttt{A/1.in} with expected \texttt{A/1.out}.
+Replace the copied samples for each problem.
+All cases run; any failure gives a nonzero status. Spacing/blank lines are
+ignored; custom or floating-point outputs need manual checks.}
 \hint{\texttt{tmpl} keeps existing files. Letters accept either case.
 \texttt{rp A sample} reads \texttt{A/sample.in}; no input argument uses stdin.}
+
+\columnbreak
+\par\noindent\begin{minipage}{\linewidth}
+\subsection{s.sh (Bash)}\label{setup:commands}
+\lstinputlisting[language=bash,basicstyle=\ttfamily\fontsize{8}{8}\selectfont,firstline=6,lastline=38]{../setup.sh}
+\end{minipage}\par
+
+\columnbreak
+\par\noindent\begin{minipage}{\linewidth}
+\subsection{tmpl/cpp.cpp}\label{setup:cpp}
+\lstinputlisting[style=cpp,basicstyle=\ttfamily\fontsize{8}{8.5}\selectfont]{../tmpl/cpp.cpp}
+\end{minipage}\par
+
+\par\noindent\begin{minipage}{\linewidth}
+\subsection{tmpl/py.py}\label{setup:python}
+\lstinputlisting[style=python,basicstyle=\ttfamily\fontsize{8}{8.5}\selectfont]{../tmpl/py.py}
+\end{minipage}\par
+\hint{\texttt{ints()} returns a list: \texttt{n,m=ints()} or \texttt{a=ints()}.
+Remove \texttt{dbg(...)} calls before testing or submitting.}
+
+\par\noindent\begin{minipage}{\linewidth}
+\subsection{Python imports}\label{setup:imports}
+\hint{Import as needed: \texttt{from module import name}}
+{\fontsize{7.5}{8.5}\selectfont
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Module} & \textbf{Useful names} \\
+\midrule
+\texttt{collections} & \texttt{Counter, defaultdict, deque} \\
+\texttt{operator} & \texttt{itemgetter, attrgetter} \\
+\texttt{heapq} & \texttt{heappush, heappop, heapify} \\
+\texttt{bisect} & \texttt{bisect\_left, bisect\_right} \\
+\texttt{functools} & \texttt{cache, cmp\_to\_key} \\
+\texttt{itertools} & \texttt{accumulate, combinations, permutations, product} \\
+\texttt{math} & \texttt{gcd, lcm, isqrt, comb, inf, sqrt, hypot, atan2, pi, factorial, prod} \\
+\bottomrule
+\end{tabularx}}
+\end{minipage}\par

@@ -1,0 +1,24 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "domjudge.fullname" . }}-database
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "domjudge.selector" . | nindent 6 }}
+      app.kubernetes.io/component: database
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "domjudge.selector" . | nindent 14 }}
+              app.kubernetes.io/component: domserver
+      ports:
+        - protocol: TCP
+          port: 3306
+{{- end }}

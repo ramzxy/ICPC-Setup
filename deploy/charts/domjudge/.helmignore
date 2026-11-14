@@ -1,0 +1,3 @@
+.git/
+*.tgz
+*.local.yaml

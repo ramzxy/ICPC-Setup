@@ -1,5 +1,12 @@
 # DOMjudge on a fresh k3s VM
 
+**Use [the Helm chart walkthrough](../deploy/charts/domjudge/README.md) for a new
+installation.** It packages the resources below and supports optional Traefik
+ACME HTTPS without installing cert-manager. That avoids the older cert-manager
+pin's documented Kubernetes version limit on the new 1.37 node. It also includes
+an opt-in experimental worker pod. The raw-manifest walkthrough below is retained
+as an alternative; do not follow both deployment routes for the same installation.
+
 This walkthrough uses the default k3s Traefik and local-path storage, with
 `domjudge.rickvm.dev` as the public hostname. Run the Linux commands on the k3s
 VM, from a copy of this repository. No commands have been run on your server by

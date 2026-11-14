@@ -39,6 +39,7 @@ The Python template uses normal `input()` and includes `ints()` for integer line
 | [practice/](docs/problem-packages.md) | Inspect/import problem ZIPs and run local checks |
 | [environment/](docs/practice-environment.md) | Optional CLI container; full desktop practice uses Proxmox |
 | [deploy/domjudge/](docs/domjudge.md) | k3s DOMjudge web/database and external judgehost groundwork |
+| [deploy/charts/domjudge/](deploy/charts/domjudge/README.md) | Helm chart, optional HTTPS and experimental k3s worker |
 | [archive/](archive/README.md) | Previous BAPC PDFs and sources |
 
 `setup.sh` installs the current templates and defines the terminal functions.
@@ -59,8 +60,13 @@ These are complementary parts of the practice setup:
   and the optional Docker/WSL2 CLI fallback.
 - [Problem packages](docs/problem-packages.md): import old contest ZIPs and
   check your solutions against sample or secret tests locally.
-- [DOMjudge on k3s](docs/domjudge.md): a persistent web/database deployment
-  with a dedicated external judgehost, plus problem-import instructions.
+- [DOMjudge on k3s](deploy/charts/domjudge/README.md): a Helm deployment for the
+  persistent web/database, optional HTTPS and an experimental worker pod.
+  [The hosting guide](docs/domjudge.md) covers external workers and problem imports.
+- [DOMjudge operator's manual](docs/domjudge-manual.md): create competitions from
+  ZIP bundles, issue team logins, start/finish contests and check the server.
+- [NWERC 2025 open practice](docs/nwerc2025-practice.md): the deployed A-L problem
+  set, verified jury checks, long-running contest settings and team login guide.
 
 NWERC 2026 lists GCC 13.3.0 and PyPy 7.3.15 (Python 3.9.18) for judging.
 The notebook's current Python 3.10+ API assumptions need a compatibility pass

@@ -1,0 +1,75 @@
+{{- if .Values.judgehost.enabled }}
+{{- $name := include "domjudge.fullname" . }}
+{{- if not (hasSuffix "/" (default (printf "http://%s-domserver/" $name) .Values.judgehost.baseUrl)) }}
+{{- fail "judgehost.baseUrl must have a trailing slash and no /api suffix" }}
+{{- end }}
+{{- if regexMatch "/api(/v[0-9]+)?/?$" .Values.judgehost.baseUrl }}
+{{- fail "judgehost.baseUrl must not include /api or /api/v4" }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}-judgehost
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  # Never overlap daemons with the same CPU ID / host cgroups.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "domjudge.selector" . | nindent 6 }}
+      app.kubernetes.io/component: judgehost
+  template:
+    metadata:
+      labels:
+        {{- include "domjudge.selector" . | nindent 8 }}
+        app.kubernetes.io/component: judgehost
+    spec:
+      automountServiceAccountToken: false
+      # Allows nsenter to address the NODE's PID 1, not the container's PID 1.
+      hostPID: true
+      hostname: {{ $name }}-judgehost
+      nodeSelector:
+        {{- toYaml (mergeOverwrite (deepCopy .Values.nodeSelector) .Values.judgehost.nodeSelector) | nindent 8 }}
+      containers:
+        - name: judgehost
+          image: {{ .Values.judgehost.image | quote }}
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          # hostPID alone does NOT share the host cgroup namespace. Enter that
+          # namespace explicitly, retaining this container's mount/network view.
+          command: [/usr/bin/dumb-init, --, /bin/sh, -ec]
+          args:
+            - |
+              command -v nsenter >/dev/null || { echo 'Image needs util-linux nsenter' >&2; exit 1; }
+              test -e /sys/fs/cgroup/cgroup.controllers || { echo 'Worker requires host cgroup v2' >&2; exit 1; }
+              test -r /sys/devices/system/cpu/cpu${DAEMON_ID}/topology/core_id || { echo 'DAEMON_ID CPU does not exist on this node' >&2; exit 1; }
+              exec nsenter --target 1 --cgroup -- /scripts/start.sh
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: {{ .Values.timezone | quote }}
+            - name: DOMSERVER_BASEURL
+              value: {{ default (printf "http://%s-domserver/" $name) .Values.judgehost.baseUrl | quote }}
+            - name: JUDGEDAEMON_USERNAME
+              value: {{ .Values.judgehost.username | quote }}
+            - name: JUDGEDAEMON_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.judgehostSecret" . }}
+                  key: {{ .Values.judgehost.passwordKey }}
+            - name: DAEMON_ID
+              value: {{ .Values.judgehost.daemonId | quote }}
+          volumeMounts:
+            - name: host-cgroups
+              mountPath: /sys/fs/cgroup
+              readOnly: false
+      volumes:
+        - name: host-cgroups
+          hostPath:
+            path: /sys/fs/cgroup
+            type: Directory
+{{- end }}

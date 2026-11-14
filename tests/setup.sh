@@ -34,6 +34,7 @@ old=$(cksum A/py.py)
 tmpl
 test "$old" = "$(cksum A/py.py)" && test -f N/cpp.cpp
 test ! -e A/tmpl
+printf 'print(int(input()))\n' >> A/py.py
 test "$(printf '42\n' | rp a)" = 42
 printf '43\n' > A/1.in
 printf '47\n' > 'A/sample input.in'
@@ -98,6 +99,8 @@ if tp n > out 2>err; then exit 1; fi
 shopt -u nullglob
 
 if command -v g++ >/dev/null; then
+    sed '/cin.tie/a\    int n; cin >> n; cout << n << char(10);' B/cpp.cpp > echo.cpp
+    cp echo.cpp B/cpp.cpp
     test "$(printf '44\n' | rc b)" = 44
     cp A/1.in B/1.in
     cp 'A/sample input.in' 'B/sample input.in'
@@ -106,7 +109,7 @@ if command -v g++ >/dev/null; then
     sed 's/cout << n/dbg(n); cout << n/' B/cpp.cpp > debug.cpp
     cp debug.cpp B/cpp.cpp
     printf '45\n' | rc b > out 2>err
-    test "$(cat out)" = 45 && grep -q 'n = 45' err
+    test "$(cat out)" = $'45\n45' && test ! -s err
     # Count real compiler invocations: tc must compile once for the batch.
     export TEST_REAL_CXX=$(command -v g++)
     export TEST_COMPILER_LOG="$test_dir/compiles"
@@ -160,6 +163,7 @@ sed -n '/^# BEGIN CONTEST COMMANDS$/,/^# END CONTEST COMMANDS$/p' \
     "$repo/setup.sh" > "$test_dir/block"
 source "$test_dir/block"
 tmpl
+printf 'print(int(input()))\n' >> C/py.py
 printf '46\n' | rp C | grep -qx 46
 printf '46\n' > C/1.in
 printf '46\n' > C/1.out

@@ -1,0 +1,108 @@
+{{- $name := include "domjudge.fullname" . -}}
+{{- if not .Values.database.persistence.existingClaim }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}-mariadb
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/resource-policy: keep
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  accessModes: [ReadWriteOnce]
+  {{- if ne .Values.database.persistence.storageClass nil }}
+  storageClassName: {{ .Values.database.persistence.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.database.persistence.size | quote }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-mariadb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    {{- include "domjudge.selector" . | nindent 4 }}
+    app.kubernetes.io/component: database
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $name }}-mariadb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ $name }}-mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "domjudge.selector" . | nindent 6 }}
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        {{- include "domjudge.selector" . | nindent 8 }}
+        app.kubernetes.io/component: database
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+        - name: mariadb
+          image: {{ .Values.database.image | quote }}
+          args:
+            - --max-connections=100
+            - --max-allowed-packet=512M
+            - --innodb-snapshot-isolation=OFF
+          env:
+            - name: MARIADB_DATABASE
+              value: {{ .Values.database.name | quote }}
+            - name: MARIADB_USER
+              value: {{ .Values.database.username | quote }}
+            - name: MARIADB_ROOT_HOST
+              value: "%"
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.databaseSecret" . }}
+                  key: {{ .Values.database.rootPasswordKey }}
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.databaseSecret" . }}
+                  key: {{ .Values.database.passwordKey }}
+          ports:
+            - name: mysql
+              containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+          startupProbe:
+            exec:
+              command: [healthcheck.sh, --connect, --innodb_initialized]
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: [healthcheck.sh, --connect, --innodb_initialized]
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.database.resources | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ default (printf "%s-mariadb" $name) .Values.database.persistence.existingClaim }}

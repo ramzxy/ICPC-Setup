@@ -1,0 +1,120 @@
+{{- $name := include "domjudge.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-domserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "domjudge.selector" . | nindent 4 }}
+    app.kubernetes.io/component: domserver
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}-domserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "domjudge.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  # Official startup installs/upgrades the database; do not overlap web pods.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "domjudge.selector" . | nindent 6 }}
+      app.kubernetes.io/component: domserver
+  template:
+    metadata:
+      labels:
+        {{- include "domjudge.selector" . | nindent 8 }}
+        app.kubernetes.io/component: domserver
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      initContainers:
+        - name: wait-for-database
+          image: {{ .Values.database.image | quote }}
+          command:
+            - sh
+            - -ec
+            - |
+              until mariadb -h "$MYSQL_HOST" -u "$MYSQL_USER" -D "$MYSQL_DATABASE" -Nse 'SELECT 1'; do
+                sleep 3
+              done
+          env:
+            - name: MYSQL_HOST
+              value: {{ $name }}-mariadb
+            - name: MYSQL_USER
+              value: {{ .Values.database.username | quote }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.database.name | quote }}
+            - name: MYSQL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.databaseSecret" . }}
+                  key: {{ .Values.database.passwordKey }}
+      containers:
+        - name: domserver
+          image: {{ .Values.domserver.image | quote }}
+          env:
+            - name: MYSQL_HOST
+              value: {{ $name }}-mariadb
+            - name: MYSQL_DATABASE
+              value: {{ .Values.database.name | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.database.username | quote }}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.databaseSecret" . }}
+                  key: {{ .Values.database.passwordKey }}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "domjudge.databaseSecret" . }}
+                  key: {{ .Values.database.rootPasswordKey }}
+            - name: DJ_DB_INSTALL_BARE
+              value: {{ ternary "0" "1" .Values.domserver.installDemoData | quote }}
+            - name: CONTAINER_TIMEZONE
+              value: {{ .Values.timezone | quote }}
+            - name: FPM_MAX_CHILDREN
+              value: {{ .Values.domserver.fpmMaxChildren | quote }}
+            - name: FPM_MEMORY_LIMIT
+              value: {{ .Values.domserver.fpmMemoryLimit | quote }}
+            - name: TRUSTED_PROXIES
+              value: {{ .Values.domserver.trustedProxies | quote }}
+          ports:
+            - name: http
+              containerPort: 80
+          startupProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+          resources:
+            {{- toYaml .Values.domserver.resources | nindent 12 }}

@@ -1,0 +1,17 @@
+# Private LAN/Tailscale access on port 30080. No router forwarding or TLS setup.
+# Requires the chart's worker Secret before enabling the privileged judgehost.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: domjudge
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    service:
+      type: NodePort
+      nodePort: 30080
+    ingress:
+      enabled: false
+    judgehost:
+      enabled: true
+      daemonId: 1

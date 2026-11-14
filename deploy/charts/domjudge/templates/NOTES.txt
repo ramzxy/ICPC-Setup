@@ -1,0 +1,19 @@
+DOMjudge {{ .Chart.AppVersion }} installed in {{ .Release.Namespace }}.
+
+Retrieve and SAVE the initial admin password privately:
+  kubectl -n {{ .Release.Namespace }} exec deployment/{{ include "domjudge.fullname" . }}-domserver -- cat /opt/domjudge/domserver/etc/initial_admin_password.secret
+
+Private access:
+  kubectl -n {{ .Release.Namespace }} port-forward service/{{ include "domjudge.fullname" . }}-domserver 8080:80
+
+Database credentials come from Secret {{ include "domjudge.databaseSecret" . }}.
+The database PVC is retained on Helm uninstall; back it up separately.
+{{ if .Values.ingress.enabled }}
+Public URL: https://{{ .Values.ingress.host }}
+{{ end }}
+{{ if .Values.judgehost.enabled }}
+EXPERIMENTAL worker enabled: privileged, host PID/cgroup access.
+Check its logs, DOMjudge Config Checker, and actual C++/Python submissions.
+{{ else }}
+No judgehost is enabled. Submissions cannot be judged yet.
+{{ end }}

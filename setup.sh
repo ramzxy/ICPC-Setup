@@ -9,16 +9,16 @@ tmpl() {
         cp -rn tmpl/. "$p"
     done
 }
+_c() { g++ -std=c++17 -O2 "$1/cpp.cpp" -o "$1/$1"; }
 rc() {
     local p=${1^^} input=/dev/stdin
     [ "$#" -gt 1 ] && input="$p/$2.in"
-    g++ -std=c++17 -O2 -DLOCAL "$p/cpp.cpp" -o "$p/$p" &&
-        "./$p/$p" < "$input"
+    _c "$p" && "./$p/$p" < "$input"
 }
 rp() {
     local p=${1^^} input=/dev/stdin
     [ "$#" -gt 1 ] && input="$p/$2.in"
-    LOCAL=1 python3 "$p/py.py" < "$input"
+    python3 "$p/py.py" < "$input"
 }
 _t() (
     set -o pipefail
@@ -34,8 +34,7 @@ _t() (
 tp() { _t "${1^^}" rp "$1"; }
 tc() {
     local p=${1^^}
-    g++ -std=c++17 -O2 -DLOCAL "$p/cpp.cpp" -o "$p/$p" &&
-        _t "$p" "./$p/$p"
+    _c "$p" && _t "$p" "./$p/$p"
 }
 # END CONTEST COMMANDS
 

@@ -1,5 +1,13 @@
 # DOMjudge deployment groundwork
 
+For running competitions rather than installing infrastructure, use
+[the operator's manual](../../docs/domjudge-manual.md).
+
+For new installations, use [the Helm chart](../charts/domjudge/README.md).
+It packages the web server/database and adds optional HTTPS plus an experimental
+k3s worker. The raw Kustomize files here remain an alternative; do not install
+both against the same intended database.
+
 Read [the deployment guide](../../docs/domjudge.md) before applying anything.
 For the default k3s installation and `domjudge.rickvm.dev`, start with
 [the k3s walkthrough](../../docs/k3s-domjudge.md).

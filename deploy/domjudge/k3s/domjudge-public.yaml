@@ -1,0 +1,19 @@
+# Only for the packaged domjudge-k3s.yaml (Helm controller) installation route.
+# Configure Traefik ACME, DNS and accounts first. Do not also run Helm CLI upgrades.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: domjudge
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ingress:
+      enabled: true
+      host: domjudge.rickvm.dev
+      certResolver: letsencrypt
+    domserver:
+      trustedProxies: "10.42.0.0/16"
+    # Set the worker account password and matching Secret first, then enable:
+    judgehost:
+      enabled: false
+      daemonId: 1
